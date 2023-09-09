@@ -1,0 +1,19 @@
+.header {
+  height: $headerHeight;
+  padding: 0 15px;
+  &__left {
+    width: $navbarWidth;
+    padding-right: 15px;
+  }
+  &__right {
+    position: relative;
+    height: 100%;
+    margin-left: auto;
+    z-index: 1000;
+    &--paper {
+      position: absolute;
+      top: 100%;
+      right: 0;
+    }
+  }
+}

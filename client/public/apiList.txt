@@ -1,0 +1,6 @@
+/api/user/sign-in --> accessToken, refreshToken
+/api/user/sign-up --> message
+/api/user/user-info {accessToken} --> user info
+/api/user/refresh-token {refreshToken} --> accessToken
+
+     

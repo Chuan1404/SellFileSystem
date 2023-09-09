@@ -1,0 +1,35 @@
+.FileUploader {
+  &__list {
+    .FileProcess {
+      padding-top: 20px;
+      max-height: 300px;
+      overflow: hidden;
+      .file {
+        display: flex;
+        align-items: center;
+        min-width: 300px;
+        max-width: 300px;
+        border-radius: 20px;
+        overflow: hidden;
+        img {
+          width: 100%;
+          object-fit: contain;
+          vertical-align: bottom;
+        }
+      }
+      .process {
+        display: flex;
+        align-self: center;
+        width: 100%;
+        align-self: auto;
+        background-color: #f8f9f9;
+      }
+    }
+    & .imgLoading {
+      width: 50px;
+      user-select: none;
+      display: block;
+      margin: auto;
+    }
+  }
+}

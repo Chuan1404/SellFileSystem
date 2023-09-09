@@ -1,0 +1,38 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+html,
+body {
+  // height: 100%;
+  // overflow: auto;
+}
+
+#root,
+#app {
+  height: 100%;
+  overflow: hidden;
+}
+
+main[id$="page"] {
+  // max-width: calc(100% - $navbarWidth);
+  // width: 100%;
+  flex: 1 1;
+  max-height: calc(100vh - $headerHeight);
+  height: 100%;
+  padding: 24px;
+  overflow: auto;
+}
+a {
+  text-decoration: none;
+  color: unset;
+}
+
+.f-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
