@@ -38,7 +38,6 @@ export default function Payment() {
       alert(response.message);
     }
   };
-
   useEffect(() => {
     if (!isLogin) {
       dispatch(openAuth());
@@ -52,7 +51,7 @@ export default function Payment() {
   return (
     <main id="payment_page">
       <Container sx={{ pt: 7 }}>
-        <Grid container spacing={2}>
+        {carts[user.id]?.length? <Grid container spacing={2}>
           <Grid item xs={8}>
             <FormControl fullWidth>
               <RadioGroup
@@ -104,7 +103,10 @@ export default function Payment() {
               </Button>
             </Box>
           </Grid>
-        </Grid>
+        </Grid>:
+        <Typography variant="h1">Chưa có sản phẩm</Typography>
+        }
+        
       </Container>
     </main>
   );

@@ -1,4 +1,12 @@
-import { Favorite, Person, Search, ShoppingCart } from "@mui/icons-material";
+import {
+  Favorite,
+  Person,
+  Receipt,
+  Search,
+  ShoppingCart,
+  CloudDownload,
+  Logout,
+} from "@mui/icons-material";
 import {
   Autocomplete,
   Avatar,
@@ -88,22 +96,42 @@ export default function Header() {
                     </Button>
                   }
                 >
-                  <MenuItem>
-                    <Person />
-                    Thông tin tài khoản
-                  </MenuItem>
-                  <MenuItem>
+                  <Link to={"/user/info"}>
+                    <MenuItem>
+                      <Person />
+                      Thông tin tài khoản
+                    </MenuItem>
+                  </Link>
+
+                  <Link to={"/user/paid"}>
+                    <MenuItem>
+                      <CloudDownload />
+                      Sản phẩm của tôi
+                    </MenuItem>
+                  </Link>
+
+                  <Link to={"/user/receipt"}>
+                    <MenuItem>
+                      <Receipt />
+                      Hóa đơn của tôi
+                    </MenuItem>
+                  </Link>
+
+                  {/* <MenuItem>
                     <Favorite />
                     Danh sách yêu thích
-                  </MenuItem>
+                  </MenuItem> */}
                   <Divider />
                   <MenuItem onClick={handleSignOut}>
-                    <Favorite />
+                    <Logout />
                     Logout
                   </MenuItem>
                 </CustomizedMenus>
-                <Link to='/cart' style={{display: 'flex', alignItems: 'center'}}>
-                  <IconButton color="primary" sx={{height: 'fit-content'}}>
+                <Link
+                  to="/cart"
+                  style={{ display: "flex", alignItems: "center" }}
+                >
+                  <IconButton color="primary" sx={{ height: "fit-content" }}>
                     <Badge
                       badgeContent={cart[user.id]?.length}
                       color="secondary"

@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
 
 @Entity
 @Data
@@ -30,6 +31,6 @@ public class Receipt {
     private User user;
 
     @ManyToMany
-    @JoinTable(name = "order_file", joinColumns = @JoinColumn(name = "order_id"), inverseJoinColumns = @JoinColumn(name = "file_id"))
+    @JoinTable(name = "receipt_file", joinColumns = @JoinColumn(name = "receipt_id"), inverseJoinColumns = @JoinColumn(name = "file_id"))
     private Set<FileUploaded> files;
 }

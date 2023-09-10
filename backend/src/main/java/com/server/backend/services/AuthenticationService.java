@@ -53,7 +53,7 @@ public class AuthenticationService {
     private VerificationCodeService verificationCodeService;
 
     public boolean register(RegisterRequest request) throws MessagingException, UnsupportedEncodingException {
-        User userExist = userService.findByEmail(request.getEmail()).orElse(null);
+        User userExist = userService.getUserByEmail(request.getEmail()).orElse(null);
         if (userExist != null)
             return false;
 
@@ -73,7 +73,7 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse signIn(SignInRequest request, boolean acceptUser) {
-        User user = userService.findByEmail(request.getEmail()).orElse(null);
+        User user = userService.getUserByEmail(request.getEmail()).orElse(null);
         var authenticationResponse = AuthenticationResponse.builder();
         if (user == null)
             return null;
@@ -115,7 +115,7 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse google(GoogleRequest request) {
-        User user = userService.findByEmail(request.getEmail()).orElse(null);
+        User user = userService.getUserByEmail(request.getEmail()).orElse(null);
         if (user == null) {
             user = User.builder()
                     .name(request.getName())

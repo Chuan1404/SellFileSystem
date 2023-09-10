@@ -5,6 +5,9 @@ const userService = {
   getInfo() {
     return callWithToken(`${API}user/info`);
   },
+  getReceipt() {
+    return callWithToken(`${API}user/receipt`)
+  }
 };
 
 export default userService;

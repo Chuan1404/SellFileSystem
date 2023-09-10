@@ -28,7 +28,7 @@ const Cart = () => {
         <Typography
           variant={"h6"}
           marginBottom={2}
-        >{`Giỏ hàng của bạn: (${cart?.length})`}</Typography>
+        >{`Giỏ hàng của bạn: (${cart?.length || 0})`}</Typography>
         <Grid container spacing={2}>
           <Grid item xs={8}>
             {cart?.length > 0 &&

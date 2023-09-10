@@ -93,6 +93,7 @@ public class MomoService {
         requestData.put("partnerCode", partnerCode);
         requestData.put("requestId", String.valueOf(params.get("requestId")));
         requestData.put("signature", signature);
+        requestData.put("lang", "vi");
         HttpEntity<Map> requestEntity = new HttpEntity<>(requestData, httpHeaders);
         ResponseEntity<Map> responseEntity = restTemplate.postForEntity(urlQuery, requestEntity, Map.class);
 

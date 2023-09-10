@@ -25,7 +25,6 @@ public class PaymentController {
     @GetMapping("/momo/check")
     public ResponseEntity<?> momoCheck(@RequestParam Map params) {
         Map response = momoService.checkOrder(params);
-        System.out.println(response.get("resultCode"));
         if((int)response.get("resultCode") == 0) {
             return ResponseEntity.ok(orderService.saveOrderByMomo(response));
         }

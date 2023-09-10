@@ -12,6 +12,7 @@ import AuthBox from "./AuthBox";
 import ButtonLoading from "./ButtonLoading";
 import MyAlert from "./MyAlert";
 import FileInCart from "./File/FileInCart";
+import Receipt from "./Receipt";
 
 
 export {
@@ -28,5 +29,6 @@ export {
     AuthBox,
     ButtonLoading,
     MyAlert,
-    FileInCart
+    FileInCart,
+    Receipt
 }

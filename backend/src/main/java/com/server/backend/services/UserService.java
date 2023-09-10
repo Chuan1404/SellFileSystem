@@ -39,6 +39,7 @@ public class UserService implements UserDetailsService {
     @Autowired
     private AmazonS3Service amazonS3Service;
 
+    // get
     public Page<?> getAllUser(Map<String, String> params) {
         Pageable pageable = null;
         Page<UserInfoResponse> users = null;
@@ -66,11 +67,12 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(id);
     }
 
-    public Optional<User> findByEmail(String email) {
+    public Optional<User> getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
 
+    // save and update
     public User saveOrUpdateUser(User user) {
         if (user.getId() == null) {
             user.setId(UUID.randomUUID().toString());
@@ -97,6 +99,7 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
+    // delete
     public boolean deleteUser(String id) {
         try {
             userRepository.deleteById(id);
@@ -106,6 +109,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    // load
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));

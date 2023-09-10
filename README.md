@@ -12,13 +12,18 @@ Hiện tại, hệ thống chưa được hoàn thiện và chưa sẵn sàng đ
 - Hỗ trợ định dạng file: JPG, PNG
 - Kiểm tra và giải nén kích thước ảnh (Ví dụ: Chuyển ảnh kích thước 6000x4000 thành 1920x1280)
 - Tương tác với Amazon S3 (Thêm, sửa xóa các file)
+- Xác thực tài khoản google
 #### 3.1.1. Client
 - Hỗ trợ đăng nhập và đăng kí bằng tài khoản google
-- Đăng tải ảnh để giao dịch
+- Các chức năng cơ bản của hệ thống bán hàng như xem chi tiết sản phẩm, phân trang, thêm vào giỏ hàng,...
 - Thanh toán bằng Momo
 #### 3.1.2. Admin
 - Quản lý tài khoản (thêm, sửa, xóa)
 - Quản lý các file (thêm, sửa, xóa)
 ### 3.2. Những tính năng trong tương lai
-- Hỗ trợ nhiều định dạng file hơn như MP3, MP4, ...
+- Thêm chức năng bán ảnh cho người dùng
+- Chat giữa người dùng và tư vấn viên
+- Gửi mail
 - Áp dụng AI trong tìm kiếm hình ảnh
+- Hỗ trợ nhiều định dạng file hơn như MP3, MP4, ...
+
