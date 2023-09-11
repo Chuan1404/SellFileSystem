@@ -1,7 +1,7 @@
-import { Container } from "@mui/material";
+import { Box, Container, Pagination } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import userService from "../../services/userService";
-import {Receipt} from '../../components'
+import { Receipt } from "../../components";
 
 const UserReceipt = () => {
   const [data, setData] = useState({});
@@ -11,10 +11,15 @@ const UserReceipt = () => {
       if (response.content) setData(response);
     })();
   }, []);
+  console.log(data)
   return (
     <main id="user_info_page">
       <Container sx={{ pt: 7 }}>
-        {Object.keys(data).length > 0 && data.content.map((item) => <Receipt sx={{mb: 2}} data={item}/>)}
+        <Box>
+          {Object.keys(data).length > 0 &&
+            data.content.map((item) => <Receipt sx={{ mb: 2 }} data={item} />)}
+        </Box>
+        <Pagination count={data.totalPages}></Pagination>
       </Container>
     </main>
   );

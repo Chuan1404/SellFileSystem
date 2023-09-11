@@ -56,7 +56,7 @@ public class MomoService {
         String extraData = Base64.getEncoder().encodeToString(params.get("extraData").toString().getBytes());
 
         String rawData = String.format("accessKey=%s&amount=%s&extraData=%s&ipnUrl=%s&orderId=%s&orderInfo=%s&partnerCode=%s&redirectUrl=%s&requestId=%s&requestType=%s",
-                accessKey, amount, extraData, ipnUrl, id, orderInfo, partnerCode, redirectUrl, id, requestType );
+                accessKey, amount, extraData, ipnUrl, id, orderInfo, partnerCode, redirectUrl, id, requestType);
         String signature = new HmacUtils("HmacSHA256", secretKey).hmacHex(rawData);
 
         params.put("accessKey", accessKey);
@@ -77,16 +77,16 @@ public class MomoService {
         return response;
     }
 
-    public Map checkOrder(Map<String, Object> params)  {
+    public Map checkOrder(Map<String, Object> params) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         Map<String, String> requestData = new HashMap<>();
 
 
-    // send request
+        // send request
         String rawData = String.format("accessKey=%s&orderId=%s&partnerCode=%s&requestId=%s",
-                accessKey, params.get("orderId"), params.get("partnerCode"), params.get("requestId") );
+                accessKey, params.get("orderId"), params.get("partnerCode"), params.get("requestId"));
         String signature = new HmacUtils("HmacSHA256", secretKey).hmacHex(rawData);
         requestData.put("accessKey", accessKey);
         requestData.put("orderId", String.valueOf(params.get("orderId")));

@@ -50,7 +50,7 @@ export default function MediaList() {
           <Typography>Bạn đã xem toàn bộ file hiện có</Typography>
         )}
       </Box>
-      <Button variant="contained" onClick={() => {setOption({...option, page: option.page + 1})}}>Xem</Button>
+      <Button variant="contained" onClick={() => {setOption({...option, page: option.page + 1})}}>Xem thêm</Button>
     </Box>
   );
 }

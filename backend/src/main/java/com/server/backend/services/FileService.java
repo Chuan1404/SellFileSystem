@@ -43,7 +43,7 @@ public class FileService {
         int limit = 0;
         int page = 0;
         if (params.get("limit") == null) {
-            params.put("limit", "5");
+            params.put("limit", "15");
         }
 
         if (params.get("page") == null || Integer.parseInt(params.get("page")) < 1) {
@@ -71,31 +71,6 @@ public class FileService {
 
     public FileUploaded getFileById(Integer id) {
         return fileRepository.findById(id).orElse(null);
-    }
-
-    public Page<FileUploaded> getFilePaid(Map<String, String> params) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        Pageable pageable = null;
-        Page<FileUploaded> fileUploadeds = null;
-        if (params.get("limit") == null) {
-            params.put("limit", "5");
-        }
-
-        if (params.get("page") == null || Integer.parseInt(params.get("page")) < 1) {
-            params.put("page", "1");
-        }
-
-        if (params.get("role") == null)
-            params.put("role", UserRole.ROLE_CUSTOMER.name());
-        try {
-            pageable = PageRequest.of(Integer.parseInt(params.get("page")) - 1, Integer.parseInt(params.get("limit")));
-            fileUploadeds = fileRepository.findPaid(user.getId(), pageable);
-        } catch (Exception exception) {
-            System.out.println(exception.getMessage());
-            return null;
-        }
-        return fileUploadeds;
     }
 
     // check the file has enough condition to push on Amazon or not

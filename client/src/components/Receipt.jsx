@@ -3,6 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const Receipt = ({ data, ...res }) => {
+  console.log(data)
   return (
     <Stack {...res}>
       <Paper sx={{ padding: 2 }} elevation={3}>
@@ -27,7 +28,7 @@ const Receipt = ({ data, ...res }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.files.map((row) => (
+            {data.files?.map((row) => (
               <TableRow key={row.id}>
                 <TableCell scope="row">{row.id}</TableCell>
                 <TableCell scope="row">{row.title}</TableCell>

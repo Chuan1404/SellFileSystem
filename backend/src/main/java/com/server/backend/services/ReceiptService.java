@@ -9,7 +9,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.server.backend.dto.response.UserInfoResponse;
 import com.server.backend.enums.PaymentMethod;
 import com.server.backend.enums.UserRole;
+import com.server.backend.models.FileUploaded;
 import com.server.backend.models.User;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +33,9 @@ public class ReceiptService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private PaidService paidService;
 
     // get
     public Page<Receipt> getByUserId(Map<String, String> params) {
@@ -56,21 +61,13 @@ public class ReceiptService {
     }
 
     // save
-    public Receipt saveOrderByMomo(Map params) {
-        String decodedString = new String(Base64.getDecoder().decode(String.valueOf(params.get("extraData"))));
-
-        Map<String, Object> content = null;
-        ArrayList<Integer> idList = new ArrayList<>();
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            content = mapper.readValue(decodedString, Map.class);
-            idList = (ArrayList) content.get("idList");
-
-        } catch (IOException error) {
-
-        }
-        User user = userService.getUserById((String) content.get("userId")).orElse(null);
+    @Transactional
+    public Receipt saveOrderByMomo(Map params, Map extraData) {
+        User user = userService.getUserById((String) extraData.get("userId")).orElse(null);
+        ArrayList<Integer> idList = (ArrayList) extraData.get("idList");
+        // create order
         var order = Receipt.builder();
+
         if (user != null) {
             order = Receipt.builder()
                     .user(user)

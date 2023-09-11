@@ -1,6 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import { Home, FileDetail, Payment, Cart, PaymentResult, UserReceipt, UserInfo } from "./routes";
+import { Home, FileDetail, Payment, Cart, PaymentResult, UserReceipt, UserInfo, UserPaid } from "./routes";
 
 export default function Routers() {
   return (
@@ -16,7 +16,7 @@ export default function Routers() {
       {/* user */}
       <Route path="/user/info" element={<UserInfo />} />
       <Route path="/user/receipt" element={<UserReceipt />} />
-      <Route path="/user/paid" element={<UserInfo />} />
+      <Route path="/user/paid" element={<UserPaid />} />
     </Routes>
   );
 }

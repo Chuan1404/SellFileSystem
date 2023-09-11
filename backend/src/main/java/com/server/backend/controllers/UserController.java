@@ -1,6 +1,7 @@
 package com.server.backend.controllers;
 
 import com.server.backend.services.FileService;
+import com.server.backend.services.PaidService;
 import com.server.backend.services.ReceiptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
-
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
@@ -20,7 +20,7 @@ public class UserController {
     private ReceiptService receiptService;
 
     @Autowired
-    private FileService fileService;
+    private PaidService paidService;
     @GetMapping("/info")
     public ResponseEntity<?> getUserInfo() {
             return ResponseEntity.ok(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
@@ -33,7 +33,7 @@ public class UserController {
 
     @GetMapping("/paid")
     public ResponseEntity<?> getUserFilePaid(@RequestParam Map params) {
-        return ResponseEntity.ok(fileService.getFilePaid(params));
+        return ResponseEntity.ok(paidService.getFilePaidByUserId(params));
     }
 
 }
