@@ -8,6 +8,7 @@ import java.net.URL;
 
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.server.backend.enums.FileQuality;
+import com.server.backend.models.FileUploaded;
 import com.server.backend.repositories.FileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,9 +25,6 @@ import javax.imageio.ImageIO;
 
 @Service
 public class AmazonS3Service {
-    @Value("${aws.s3.bucket.public.name}")
-    private String bucketName;
-
     @Value("${aws.s3.bucket.public.name}")
     private String publicBucket;
 
@@ -50,8 +48,10 @@ public class AmazonS3Service {
         return s3Url.toString();
     }
 
-    public byte[] downloadFile(String filename) {
-        S3Object s3Object = amazonS3.getObject(bucketName, filename);
+    public byte[] downloadFile(FileUploaded fileUploaded) {
+        System.out.println(fileUploaded.getRoot().split(".com/")[1]);
+        // bucket/type/folder/file
+        S3Object s3Object = amazonS3.getObject(privateBucket, fileUploaded.getRoot().split(".com/")[1]);
         S3ObjectInputStream inputStream = s3Object.getObjectContent();
         try {
             byte[] content = IOUtils.toByteArray(inputStream);
@@ -61,11 +61,5 @@ public class AmazonS3Service {
         }
 
         return null;
-    }
-
-
-    public String deleteFile(String filename) {
-        amazonS3.deleteObject(bucketName, filename);
-        return filename + " removed";
     }
 }

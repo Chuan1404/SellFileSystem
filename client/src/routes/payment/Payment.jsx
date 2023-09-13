@@ -11,15 +11,13 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { closeAuth, openAuth } from "../../store/slices/pageSlice";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 import paymentService from "../../services/paymentService";
 
 export default function Payment() {
-  const { isLogin, user } = useSelector((store) => store.auth);
+  const { user } = useSelector((store) => store.auth);
   const carts = useSelector((store) => store.cart.values);
-  const dispatch = useDispatch();
 
   const [value, setValue] = useState("momo");
   const handlePay = async () => {
@@ -38,16 +36,7 @@ export default function Payment() {
       alert(response.message);
     }
   };
-  useEffect(() => {
-    if (!isLogin) {
-      dispatch(openAuth());
-    } else {
-      dispatch(closeAuth());
-    }
-  }, [isLogin]);
-  if (!isLogin) {
-    return;
-  }
+ 
   return (
     <main id="payment_page">
       <Container sx={{ pt: 7 }}>

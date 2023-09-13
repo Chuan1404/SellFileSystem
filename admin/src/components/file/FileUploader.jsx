@@ -24,8 +24,8 @@ const FileUploader = ({ width = "100%" }) => {
 
   // delete handled file
   const handleDelete = (file) => {
-    setFileLoaded((prestate) => prestate.filter(item => item.id != file.id))
-  }
+    setFileLoaded((prestate) => prestate.filter((item) => item.id != file.id));
+  };
 
   useEffect(() => {
     let fileHandle = [];
@@ -37,14 +37,12 @@ const FileUploader = ({ width = "100%" }) => {
         body: formData,
       });
       fileHandle.unshift({ ...item, result });
-    setFileLoaded([...fileHandle, ...fileLoaded]);
-
+      if (fileLoaded.findIndex((loaded) => loaded.id === item.id) < 0)
+        setFileLoaded([...fileHandle, ...fileLoaded]);
     });
-
   }, [files]);
 
   useEffect(() => {
-
     let idList = fileLoaded.map((item) => item.id);
     let filters = files.filter((item) => !idList.includes(item.id));
 
@@ -75,11 +73,13 @@ const FileUploader = ({ width = "100%" }) => {
           <img className="imgLoading" key={index} src={loading} />
         ))}
         {fileLoaded.map((item) => (
-          <FileProcess key={item.id} handleDelete={() => handleDelete(item)} data={item} />
+          <FileProcess
+            key={item.id}
+            handleDelete={() => handleDelete(item)}
+            data={item}
+          />
         ))}
-        
       </Box>
-      
     </Box>
   );
 };

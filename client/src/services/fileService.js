@@ -1,5 +1,5 @@
 import { API } from "../assets/js/constants";
-import { getData } from "../utils/fetchData";
+import { callWithToken, getData } from "../utils/fetchData";
 
 const fileService = {
   getFiles(search = "") {
@@ -8,6 +8,9 @@ const fileService = {
   },
   getFile(id) {
     return getData(`${API}file/${id}`);
+  },
+  downloadFile(url) {
+    return callWithToken(`${API}file/download/${url}`, {type: 'text'})
   }
 };
 

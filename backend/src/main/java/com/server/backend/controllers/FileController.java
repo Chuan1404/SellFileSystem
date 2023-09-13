@@ -4,16 +4,19 @@ package com.server.backend.controllers;
 import com.server.backend.dto.response.ErrorResponse;
 import com.server.backend.models.FileUploaded;
 import com.server.backend.models.Tag;
+import com.server.backend.services.AmazonS3Service;
 import com.server.backend.services.FileService;
 import com.server.backend.services.TagService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,6 +31,9 @@ public class FileController {
 
     @Autowired
     private TagService tagService;
+
+    @Autowired
+    private AmazonS3Service amazonS3Service;
 
     @GetMapping(value = "/")
     public ResponseEntity<?> index(@RequestParam Map<String, String> params) {
@@ -63,17 +69,18 @@ public class FileController {
         return ResponseEntity.ok(fileUploaded);
     }
 
-//    @GetMapping(value = "/download/{filename}")
-//    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String filename) {
-//        byte[] data = amazonS3Service.downloadFile(filename);
-//        ByteArrayResource resource = new ByteArrayResource(data);
-//        return ResponseEntity
-//        .ok()
-//        .contentLength(data.length)
-//        .header("Content-type", "application/octet-stream")
-//        .header("Content-disposition", "attachment")
-//        .body(resource);
-//    }
+    @GetMapping(value = "/download/{id}")
+    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String id) {
+        FileUploaded file = fileService.getFileById(id);
+        byte[] data = amazonS3Service.downloadFile(file);
+        ByteArrayResource resource = new ByteArrayResource(data);
+        return ResponseEntity
+        .ok()
+        .contentLength(data.length)
+        .header("Content-type", "application/octet-stream")
+        .header("Content-disposition", "attachment")
+        .body(resource);
+    }
 //
 //    @GetMapping(value = "/delete/{filename}")
 //    public ResponseEntity<String> deleteFile(@PathVariable String filename) {

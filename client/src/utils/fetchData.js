@@ -23,7 +23,7 @@ export const getData = async (api, options = {}) => {
   return response.json();
 };
 
-export const callWithToken = async (api, options = {}) => {
+export const callWithToken = async (api, options = {type: 'json'}) => {
   const token = JSON.parse(localStorage.getItem("token"));
   if (!token)
     return {
@@ -32,6 +32,7 @@ export const callWithToken = async (api, options = {}) => {
     };
 
   options = {
+    ...options,
     method: options.method ? options.method : "GET",
     headers: {
       Authorization: `Bearer ${token.accessToken}`,
@@ -56,5 +57,5 @@ export const callWithToken = async (api, options = {}) => {
       };
     }
   }
-  return response.json();
+  return options.type === 'json'? response.json() : response.arrayBuffer();
 };

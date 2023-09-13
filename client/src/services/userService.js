@@ -7,6 +7,10 @@ const userService = {
   },
   getReceipt() {
     return callWithToken(`${API}user/receipt`)
+  },
+
+  getPaid() {
+    return callWithToken(`${API}user/paid`)
   }
 };
 

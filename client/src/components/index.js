@@ -13,6 +13,8 @@ import ButtonLoading from "./ButtonLoading";
 import MyAlert from "./MyAlert";
 import FileInCart from "./File/FileInCart";
 import Receipt from "./Receipt";
+import FilePaid from "./FilePaid";
+import Authenticated from "./AuthBox/Authenticated";
 
 
 export {
@@ -30,5 +32,7 @@ export {
     ButtonLoading,
     MyAlert,
     FileInCart,
-    Receipt
+    Receipt,
+    FilePaid,
+    Authenticated
 }

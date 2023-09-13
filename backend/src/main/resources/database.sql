@@ -52,7 +52,15 @@ create table `file` (
     constraint fk_file_user foreign key(`user_id`) references `user`(`id`) on delete set null
 );
 
--- INSERT INTO `file_system`.`file` (`name`, `size`, `price`, `is_active`, `created_date`, `user_id`, `format_id`) VALUES ('anh', '1000', '0', b'1', '2022-5-7', '93bdafd6-f6f2-11ed-a253-089798a886c7', 1);
+
+create table `paid` (
+	`id` int primary key auto_increment,
+    `file_id` int,
+    `user_id` varchar(100),
+    `expireDate` datetime,
+    constraint fk_paid_user foreign key(`user_id`) references `user`(`id`) on delete cascade,
+     constraint fk_paid_file foreign key(`file_id`) references `file`(`id`) on delete cascade
+);
 
 create table `favorite` (
 	`id` int primary key auto_increment,
@@ -61,23 +69,23 @@ create table `favorite` (
     constraint fk_favorite_user foreign key(`user_id`) references `user`(`id`) on delete cascade
 );
 
-create table `order` (
+create table `receipt` (
 	`id` int primary key auto_increment,
     `total_price` double not null,
     `created_date` datetime not null,
     `method` varchar(20) not null,
     `user_id` varchar(100),
     
-    constraint fk_order_user foreign key(`user_id`) references `user`(`id`) on delete set null
+    constraint fk_receipt_user foreign key(`user_id`) references `user`(`id`) on delete set null
 );
 
--- create table `order_detail` (
+-- create table `receipt_detail` (
 -- 	`id` int primary key auto_increment,
---     `order_id` int,
+--     `receipt_id` int,
 --     `file_id` int,
 --     
---     constraint fk_order_detail foreign key(`order_id`) references `order`(`id`) on delete cascade,
---     constraint fk_order_file foreign key(`file_id`) references `file`(`id`) on delete set null
+--     constraint fk_receipt_detail foreign key(`receipt_id`) references `receipt`(`id`) on delete cascade,
+--     constraint fk_receipt_file foreign key(`file_id`) references `file`(`id`) on delete set null
 -- );
 
 create table `comment` (

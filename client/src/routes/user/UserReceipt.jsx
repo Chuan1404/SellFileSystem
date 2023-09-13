@@ -11,7 +11,6 @@ const UserReceipt = () => {
       if (response.content) setData(response);
     })();
   }, []);
-  console.log(data)
   return (
     <main id="user_info_page">
       <Container sx={{ pt: 7 }}>
