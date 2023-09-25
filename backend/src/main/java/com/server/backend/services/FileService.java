@@ -2,7 +2,11 @@ package com.server.backend.services;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import com.server.backend.dto.FileUploadedDTO;
+import com.server.backend.dto.request.UpdateFileRequest;
+import com.server.backend.dto.response.ErrorResponse;
 import com.server.backend.enums.FileQuality;
 import com.server.backend.enums.UserRole;
 import com.server.backend.models.FileUploaded;
@@ -12,6 +16,7 @@ import com.server.backend.utils.ImageHandler;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -29,19 +34,19 @@ public class FileService {
     private FileRepository fileRepository;
 
     @Autowired
-    private ReceiptService receiptService;
-
-    @Autowired
     private ImageHandler imageHandler;
 
     @Autowired
     private AmazonS3Service amazonS3Service;
 
+    @Autowired
+    private TagService tagService;
+
     // get
-    public Page<FileUploaded> getFiles(Map<String, String> params) {
+    public Page<FileUploadedDTO> getFiles(Map<String, String> params) {
         Pageable pageable = null;
         int limit = 0;
-        int page = 0;
+        int pageNumber = 0;
         if (params.get("limit") == null) {
             params.put("limit", "15");
         }
@@ -51,12 +56,20 @@ public class FileService {
         }
         try {
             limit = Integer.parseInt(params.get("limit"));
-            page = Integer.parseInt(params.get("page"));
-            pageable = PageRequest.of(page - 1, limit);
+            pageNumber = Integer.parseInt(params.get("page"));
+            pageable = PageRequest.of(pageNumber - 1, limit);
         } catch (NumberFormatException numberFormatException) {
             return null;
         }
-        return fileRepository.findAll(pageable);
+        Page<FileUploaded> page = fileRepository.findAll(pageable);
+        List<FileUploadedDTO> dtoList = page
+                .getContent()
+                .stream()
+                .map(FileUploadedDTO::new)
+                .collect(Collectors.toList());
+        Page<FileUploadedDTO> dtoPage = new PageImpl<>(dtoList, page.getPageable(), page.getTotalElements());
+
+        return dtoPage;
     }
     public FileUploaded getFileById(String id) {
         int intId = 0;
@@ -81,7 +94,7 @@ public class FileService {
             file.delete();
             return response;
         }
-        return null;
+        return ResponseEntity.badRequest().body(new ErrorResponse(String.format("Not support this file type", multipartFile.getName())));
     }
 
 
@@ -122,15 +135,25 @@ public class FileService {
         fileUploaded.high(result.get("high"));
         fileUploaded.root(result.get("root"));
         fileUploaded.display(result.get("display"));
-        fileUploaded.price(0.0);
         fileUploaded.user((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         fileUploaded.isActive(true);
         return fileUploaded.build();
     }
 
+    public FileUploaded updateByRequest(Integer id, UpdateFileRequest request) {
+        FileUploaded fileUploaded = fileRepository.findById(id).orElse(null);
 
-    public FileUploaded saveFile(FileUploaded fileUploaded) {
+        return this.saveOrUpdateFile(fileUploaded, request);
+    }
+
+    public FileUploaded saveOrUpdateFile(FileUploaded fileUploaded, UpdateFileRequest request) {
+        if(fileUploaded.getId() > 0) {
+            fileUploaded.setTag(tagService.saveAllTags(request.getTags()));
+            fileUploaded.setPrice(request.getPrice());
+            fileUploaded.setTitle(request.getTitle());
+        }
         return fileRepository.save(fileUploaded);
+
     }
 
 }

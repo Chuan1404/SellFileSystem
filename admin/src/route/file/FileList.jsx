@@ -1,23 +1,28 @@
-import React, { useMemo } from "react";
-import { Authenticated, Table } from "../../components";
 import {
   Avatar,
   Button,
   Chip,
   Divider,
   Stack,
+  TextField,
   Typography,
 } from "@mui/material";
-import { fileService } from "../../services";
+import React, { useMemo, useRef } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
+import { Authenticated, InputTags, Table } from "../../components";
 import useQuery from "../../hooks/useQuery";
+import { fileService } from "../../services";
+import { closeForm } from "../../store/slices/pageSlice";
 
 const FileList = () => {
   const { search } = useLocation();
-  const { data: fileData, fetching: isLoading } = useQuery(
-    () => fileService.getFiles(search),
-    [search]
-  );
+  const {
+    data: fileData,
+    fetching: isLoading,
+    setData: setFileData,
+  } = useQuery(() => fileService.getFiles(search), [search]);
   const columns = useMemo(
     () => [
       {
@@ -29,18 +34,18 @@ const FileList = () => {
         header: "Tiêu đề",
         accessorKey: "title",
         Cell: ({ row }) => (
-          <Typography variant="h6" fontSize={15}>{row.original.title}</Typography>
+          <Typography variant="h6" fontSize={15}>
+            {row.original.title}
+          </Typography>
         ),
       },
       {
         header: "Tags",
-        accessorKey: "tag",
+        accessorKey: "tags",
         Cell: ({ row }) => {
-          let arr = row.original.tag.map((item) => item.name);
-
           return (
             <Stack spacing={1} direction={"row"}>
-              {arr.map((tag, index) => (
+              {row.original.tags.map((tag, index) => (
                 <Chip key={index} size="small" label={tag} />
               ))}
             </Stack>
@@ -80,9 +85,25 @@ const FileList = () => {
           );
         },
       },
+      {
+        header: "",
+        accessorKey: "id",
+        Cell: () => <div style={{ display: "none" }}></div>,
+      },
     ],
     []
   );
+
+  const handleEdit = (editedData) => {
+    if (editedData.error) return alert(editedData.error);
+    setFileData({
+      ...fileData,
+      content: fileData.content.map((item) => {
+        return item.id == editedData.id ? editedData : item;
+      }),
+    });
+  };
+
   return (
     <Authenticated>
       <main id="file_page">
@@ -99,14 +120,72 @@ const FileList = () => {
           columns={columns}
           data={fileData}
           isLoading={isLoading}
-          // FormEdit={FormEdit}
+          FormEdit={FormEdit}
           // handleOpenForm={handleOpenForm}
           // handleDelete={handleDelete}
-          // handleEdit={handleEdit}
+          handleEdit={handleEdit}
         />
       </main>
     </Authenticated>
   );
 };
+function FormEdit({ defaultValues = {}, handleEdit = () => {} }) {
+  const dispatch = useDispatch();
+  let tagRef = useRef(null);
+
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    // formState: { errors },
+  } = useForm({
+    defaultValues: defaultValues,
+  });
+
+
+  const onSubmit = async (data) => {
+    let formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("price", data.price);
+    formData.append("tags", tagRef.current.value.split(","));
+    let response = await fileService.updateFiles(data.id, formData);
+    handleEdit(response);
+    dispatch(closeForm());
+  };
+  return (
+    <Stack width={400} sx={{ background: "white" }} padding={3}>
+      <Typography variant="h4">Chỉnh sửa file</Typography>
+      <TextField
+        size="small"
+        defaultValue={getValues("title")}
+        label={"Tiêu đề"}
+        {...register("title")}
+        margin="normal"
+      />
+
+      <TextField
+        size="small"
+        defaultValue={getValues("price")}
+        label={"Giá (VNĐ)"}
+        {...register("price")}
+        margin="normal"
+      />
+
+      <InputTags
+        defaultValue={getValues("tags")}
+        {...register("tags")}
+        ref={tagRef}
+      />
+      <Button
+        type="submit"
+        variant="contained"
+        sx={{ marginTop: 2 }}
+        onClick={handleSubmit(onSubmit)}
+      >
+        Xác nhận
+      </Button>
+    </Stack>
+  );
+}
 
 export default FileList;

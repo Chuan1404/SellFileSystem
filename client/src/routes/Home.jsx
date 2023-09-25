@@ -1,4 +1,4 @@
-import { Container } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import { Banner, MediaList, TypeTags } from "../components";
 
 export default function Home() {
@@ -6,7 +6,7 @@ export default function Home() {
     <main id="home_page">
       <Banner class="banner" />
       <Container>
-        <MediaList />
+      <MediaList/>
       </Container>
     </main>
   );

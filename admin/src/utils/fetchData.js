@@ -20,7 +20,6 @@ export const postData = async (api, data = {}, options = {}) => {
 };
 
 export const getData = async (api, options = {}) => {
-
   let response = await fetch(api, {
     method: "GET",
     headers: {
@@ -28,7 +27,6 @@ export const getData = async (api, options = {}) => {
     },
     ...options,
   });
-
 
   return response.json();
 };
@@ -55,9 +53,15 @@ export const callWithToken = async (api, options = {}) => {
       token: token.refreshToken,
     });
     if (!response.error) {
-      options.headers.Authorization = `Bearer ${response.accessToken}`
+      options.headers.Authorization = `Bearer ${response.accessToken}`;
       localStorage.setItem("token", JSON.stringify(response));
       response = await fetch(api, options);
+    } else {
+      localStorage.removeItem("token");
+      return {
+        status: 403,
+        error: "Forbiden",
+      };
     }
   }
 

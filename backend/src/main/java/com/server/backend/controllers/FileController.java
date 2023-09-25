@@ -1,7 +1,10 @@
 package com.server.backend.controllers;
 
 
+import com.server.backend.dto.FileUploadedDTO;
+import com.server.backend.dto.request.UpdateFileRequest;
 import com.server.backend.dto.response.ErrorResponse;
+import com.server.backend.dto.response.Message;
 import com.server.backend.models.FileUploaded;
 import com.server.backend.models.Tag;
 import com.server.backend.services.AmazonS3Service;
@@ -37,7 +40,7 @@ public class FileController {
 
     @GetMapping(value = "/")
     public ResponseEntity<?> index(@RequestParam Map<String, String> params) {
-        Page<FileUploaded> pages = fileService.getFiles(params);
+        Page<FileUploadedDTO> pages = (Page<FileUploadedDTO>) fileService.getFiles(params);
         if (pages == null) {
             return ResponseEntity.badRequest().body(new ErrorResponse("Parameter are not valid"));
         }
@@ -48,7 +51,7 @@ public class FileController {
     public ResponseEntity<?> detail(@PathVariable String id) {
         FileUploaded fileUploaded = fileService.getFileById(id);
         if (fileUploaded == null) return ResponseEntity.badRequest().body(new ErrorResponse("File does not exist"));
-        return ResponseEntity.ok(fileUploaded);
+        return ResponseEntity.ok(new FileUploadedDTO(fileUploaded));
     }
 
     @PostMapping(value = "/check")
@@ -58,15 +61,23 @@ public class FileController {
 
     @PostMapping(value = "/upload")
     @Transactional
-    public ResponseEntity<?> uploadFile(@RequestParam(name = "file") MultipartFile multipartFile, @RequestParam(name = "tags") String tagStr, @RequestParam(name = "title") String title) {
+    public ResponseEntity<?> uploadFile(@RequestParam(name = "file") MultipartFile multipartFile, @RequestParam(name = "tags") String tagStr, @RequestParam(name = "title") String title, @RequestParam(name = "price") Double price) {
         Set<Tag> tags = tagService.saveAllTags(Arrays.stream(tagStr.split(",")).collect(Collectors.toSet()));
         FileUploaded fileUploaded = fileService.uploadFile(multipartFile);
         fileUploaded.setTag(tags);
         fileUploaded.setTitle(title);
+        fileUploaded.setPrice(price);
 
-        fileService.saveFile(fileUploaded);
+        fileService.saveOrUpdateFile(fileUploaded, null);
 
-        return ResponseEntity.ok(fileUploaded);
+        return ResponseEntity.ok(new FileUploadedDTO(fileUploaded));
+    }
+
+    @PostMapping(value = "/update/{id}")
+    public ResponseEntity<?> uploadFile(@PathVariable Integer id, UpdateFileRequest updateFileRequest) {
+        FileUploaded fileUploaded = fileService.getFileById(id);
+        fileUploaded = fileService.saveOrUpdateFile(fileUploaded, updateFileRequest);
+        return ResponseEntity.ok(new FileUploadedDTO(fileUploaded));
     }
 
     @GetMapping(value = "/download/{id}")
@@ -75,11 +86,11 @@ public class FileController {
         byte[] data = amazonS3Service.downloadFile(file);
         ByteArrayResource resource = new ByteArrayResource(data);
         return ResponseEntity
-        .ok()
-        .contentLength(data.length)
-        .header("Content-type", "application/octet-stream")
-        .header("Content-disposition", "attachment")
-        .body(resource);
+                .ok()
+                .contentLength(data.length)
+                .header("Content-type", "application/octet-stream")
+                .header("Content-disposition", "attachment")
+                .body(resource);
     }
 //
 //    @GetMapping(value = "/delete/{filename}")

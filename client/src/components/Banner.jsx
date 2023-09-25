@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import myImage from '../assets/images/10.jpg';
 
-export default function Banner({image, title="Welcome to our website", ...props}) {
+export default function Banner({image, title="Chào mừng bạn đến với DevChu", ...props}) {
 
     // onclick => isLoading = true
     return (

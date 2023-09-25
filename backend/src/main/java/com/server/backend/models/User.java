@@ -5,9 +5,7 @@ import java.util.*;
 
 import com.server.backend.enums.AccountState;
 import jakarta.persistence.*;
-import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.server.backend.enums.UserRole;

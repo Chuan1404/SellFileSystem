@@ -80,8 +80,8 @@ export default function Header() {
               sx={{ maxWidth: "100%", width: "100%", marginRight: 2 }}
               renderInput={(params) => <TextField {...params} label="Movie" />}
             />
-            <Button variant="contained" endIcon={<Search />}>
-              Search
+            <Button sx={{whiteSpace: 'nowrap'}} variant="contained" endIcon={<Search />}>
+              Tìm kiếm
             </Button>
           </Stack>
 
@@ -124,7 +124,7 @@ export default function Header() {
                   <Divider />
                   <MenuItem onClick={handleSignOut}>
                     <Logout />
-                    Logout
+                    Đăng xuất
                   </MenuItem>
                 </CustomizedMenus>
                 <Link
@@ -147,7 +147,7 @@ export default function Header() {
                 onClick={handleSignIn}
                 sx={{ alignSelf: "center" }}
               >
-                Sign in
+                Đăng nhập
               </Button>
             )}
           </Box>

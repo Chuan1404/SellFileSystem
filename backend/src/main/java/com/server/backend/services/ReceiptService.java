@@ -1,15 +1,10 @@
 package com.server.backend.services;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.server.backend.dto.response.UserInfoResponse;
 import com.server.backend.enums.PaymentMethod;
-import com.server.backend.enums.UserRole;
-import com.server.backend.models.FileUploaded;
 import com.server.backend.models.User;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;

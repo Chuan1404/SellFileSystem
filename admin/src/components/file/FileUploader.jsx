@@ -9,6 +9,7 @@ import { callWithToken } from "../../utils/fetchData";
 const FileUploader = ({ width = "100%" }) => {
   const [files, setFiles] = useState([]);
   const [fileLoaded, setFileLoaded] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   // add file need to load
   const handleChange = (e) => {
@@ -20,6 +21,7 @@ const FileUploader = ({ width = "100%" }) => {
       });
     });
     setFiles(currentFiles);
+    setIsLoading(true);
   };
 
   // delete handled file
@@ -41,12 +43,12 @@ const FileUploader = ({ width = "100%" }) => {
         setFileLoaded([...fileHandle, ...fileLoaded]);
     });
   }, [files]);
-
+  
   useEffect(() => {
-    let idList = fileLoaded.map((item) => item.id);
-    let filters = files.filter((item) => !idList.includes(item.id));
-
-    if (files.length != 0) setFiles(filters);
+    if (files.length != 0) {
+      setFiles([]);
+      setIsLoading(false);
+    }
   }, [fileLoaded]);
   return (
     <Box className="FileUploader">
@@ -69,9 +71,7 @@ const FileUploader = ({ width = "100%" }) => {
         </Button>
       </Stack>
       <Box className="FileUploader__list">
-        {files.map((item, index) => (
-          <img className="imgLoading" key={index} src={loading} />
-        ))}
+        {isLoading && <img className="imgLoading" src={loading} />}
         {fileLoaded.map((item) => (
           <FileProcess
             key={item.id}

@@ -1,27 +1,34 @@
-import { FavoriteBorderOutlined } from "@mui/icons-material";
-import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
+import { Box, IconButton, Pagination, Stack, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 import fileService from "../services/fileService";
 import queryLocation from "../utils/queryLocation";
-import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { FavoriteBorderOutlined } from "@mui/icons-material";
 
 export default function MediaList() {
   const [renderData, setRenderData] = useState([]);
-  const [fileData, setFileData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [option, setOption] = useState({ page: 1 });
-  const currentPage = useRef(1);
 
+  const fetchData = async () => {
+    let query = `?${queryLocation.toString(option)}`;
+    let res = await fileService.getFiles(query);
+    if (!res.error) {
+      setRenderData(res);
+    }
+  };
+  const handleChange = (event, value) => {
+    setOption({...option, page: value})
+  }
+  // fetch data first time
   useEffect(() => {
-    (async () => {
-      let query = `?${queryLocation.toString(option)}`;
-      let res = await fileService.getFiles(query);
-      if (!res.error) {
-        currentPage.current = option.page;
-        console.log("ref", currentPage.current);
-        setRenderData([...renderData, ...res.content]);
-      }
-    })();
+    window.scrollTo({
+      top: 0
+    })
+    setIsLoading(true)
+    fetchData();
+    setIsLoading(false)
+    
   }, [option]);
   return (
     <Box className="mediaList">
@@ -29,7 +36,7 @@ export default function MediaList() {
 
       <Box className="mediaList__items" marginTop={2}>
         {!isLoading ? (
-          renderData.map((item, index) => (
+          renderData?.content?.map((item, index) => (
             <Link key={index} to={`/file/detail/${item.id}`}>
               <Box className="mediaList__items--item">
                 <img src={item.display} />
@@ -47,10 +54,12 @@ export default function MediaList() {
             </Link>
           ))
         ) : (
-          <Typography>Bạn đã xem toàn bộ file hiện có</Typography>
+          <Typography>...Loading</Typography>
         )}
       </Box>
-      <Button variant="contained" onClick={() => {setOption({...option, page: option.page + 1})}}>Xem thêm</Button>
+      <Box className="mediaList__pagination" m={5}>
+        <Pagination count={renderData?.totalPages} color="primary" onChange={handleChange}/>
+      </Box>
     </Box>
   );
 }

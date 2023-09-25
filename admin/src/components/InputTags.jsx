@@ -1,9 +1,9 @@
-import { Cancel, Close } from "@mui/icons-material";
-import { Box, Chip, Stack, TextField, Typography } from "@mui/material";
+import { Close } from "@mui/icons-material";
+import { Chip, Stack, TextField, Typography } from "@mui/material";
 import React, { forwardRef, useRef, useState } from "react";
 
-const InputTags = forwardRef(({}, inputRef) => {
-  const [tags, setTags] = useState([]);
+const InputTags = forwardRef(({ defaultValue, ...props }, inputRef) => {
+  const [tags, setTags] = useState(defaultValue);
   const tagRef = useRef(null);
 
   //HandleSubmit
@@ -36,6 +36,7 @@ const InputTags = forwardRef(({}, inputRef) => {
         />
       </form>
       <input
+        {...props}
         ref={inputRef}
         readOnly
         value={tags.join(",")}
@@ -62,30 +63,6 @@ function Tag({ data, handleDelete }) {
         </Stack>
       }
     />
-
-    // <Box
-    //   sx={{
-    //     background: "#191b26",
-    //     height: "100%",
-    //     display: "inline-flex",
-    //     padding: "0.4rem",
-    //     margin: "0 0.5rem 0.5rem 0",
-    //     justifyContent: "center",
-    //     alignContent: "center",
-    //     color: "#ffffff",
-    //     borderRadius: "1rem",
-    //   }}
-    // >
-    //   <Stack direction="row" gap={1}>
-    //     <Typography>{data}</Typography>
-    //     <Cancel
-    //       sx={{ cursor: "pointer" }}
-    //       onClick={() => {
-    //         handleDelete(data);
-    //       }}
-    //     />
-    //   </Stack>
-    // </Box>
   );
 }
 export default InputTags;

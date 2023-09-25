@@ -1,6 +1,7 @@
 import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import React, { useRef, useState } from "react";
 import loading from "../../assets/images/loading2.svg";
+import notSupport from "../../assets/images/errors/not-support.gif";
 import { API } from "../../assets/js/constants";
 import { callWithToken } from "../../utils/fetchData";
 import InputTags from "../InputTags";
@@ -8,6 +9,7 @@ import InputTags from "../InputTags";
 const FileProcess = ({ data, handleDelete }) => {
   let tagRef = useRef(null);
   let titleRef = useRef(null);
+  let priceRef = useRef(0);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async () => {
@@ -15,6 +17,7 @@ const FileProcess = ({ data, handleDelete }) => {
     let form = new FormData();
     form.append("file", data.file);
     form.append("title", titleRef.current.value);
+    form.append("price", priceRef.current.value);
     form.append("tags", tagRef.current.value);
     let response = await callWithToken(`${API}/file/upload`, {
       method: "POST",
@@ -27,16 +30,19 @@ const FileProcess = ({ data, handleDelete }) => {
       console.log("Không xóa", data);
     }
   };
-
   return (
     <Stack className="FileProcess" direction={"row"} spacing={2}>
       <Box className="file">
-        <img
-          id="preview"
-          src={URL.createObjectURL(data.file)}
-          style={{ borderRadius: 20 }}
-          alt=""
-        />
+        {data?.file.type.startsWith("image/") ? (
+          <img
+            id="preview"
+            src={URL.createObjectURL(data.file)}
+            style={{ borderRadius: 20 }}
+            alt=""
+          />
+        ) : (
+          <img src={notSupport} />
+        )}
       </Box>
 
       <Box className="process" padding={2}>
@@ -51,11 +57,18 @@ const FileProcess = ({ data, handleDelete }) => {
         ) : (
           <Stack justifyContent={"flex-start"} flexGrow={1}>
             <Typography variant="h6" marginBottom={2}>
-              Share it to the others
+              Chia sẻ nó với mọi người
             </Typography>
             <TextField
               inputRef={titleRef}
               label="Tiêu đề"
+              size="small"
+              sx={{ marginBottom: 4, width: 300 }}
+            />
+             <TextField
+              inputRef={priceRef}
+              type="number"
+              label="Giá (VNĐ)"
               size="small"
               sx={{ marginBottom: 4, width: 300 }}
             />

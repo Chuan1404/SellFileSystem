@@ -11,7 +11,7 @@ import {
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { Navigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { Authenticated, Table } from "../components";
 import useQuery from "../hooks/useQuery";
 import { userService } from "../services";
@@ -44,10 +44,9 @@ export default function User({ role }) {
         header: "Vai trò",
         accessorKey: "userRoles",
         Cell: ({ row }) => {
-          let arr = row.original.userRoles.map((item) => item.name);
           return (
             <Stack spacing={1}>
-              {arr.map((role, index) => (
+              {row.original.userRoles.map((role, index) => (
                 <Chip
                   key={index}
                   size="small"
@@ -117,20 +116,17 @@ export default function User({ role }) {
   };
 
   const handleEdit = (editedData) => {
+    console.log(editedData)
     if (editedData.error) return alert(editedData.error);
-    let listRoles = editedData.userRoles.map((item) => item.name);
     setUserData({
       ...userData,
-      content: !listRoles.includes(role)
+      content: !editedData.userRoles.includes(role)
         ? userData.content.filter((item) => item.id != editedData.id)
         : userData.content.map((item) =>
             item.id == editedData.id ? editedData : item
           ),
     });
   };
-
-  const token = JSON.parse(localStorage.getItem("token"));
-  if (!token) return <Navigate to={"/auth"} />;
   return (
     <Authenticated>
       <main id="user_page">
@@ -177,17 +173,18 @@ function FormEdit({ defaultValues = {}, handleEdit = () => {} }) {
   };
 
   const onSubmit = async (data) => {
-    let formData = new FormData();
-    typeof data.avatar !== "string" && data.avatar != null && formData.append("avatar", data.avatar);
+    console.log(data);
 
+    let formData = new FormData();
+    typeof data.avatar !== "string" &&
+      data.avatar != null &&
+      formData.append("avatar", data.avatar);
     formData.append("name", data.name);
     formData.append("state", data.state);
     formData.append("userRoles", data.userRoles);
-    console.log(data)
     let response = await userService.updateUser(data.id, formData);
     handleEdit(response);
     dispatch(closeForm());
-
   };
   return (
     <Stack
@@ -239,7 +236,7 @@ function FormEdit({ defaultValues = {}, handleEdit = () => {} }) {
         disablePortal
         multiple={true}
         options={["ROLE_CUSTOMER", "ROLE_EDITOR", "ROLE_ADMIN"]}
-        defaultValue={getValues("userRoles").map((role) => role.name)}
+        defaultValue={getValues("userRoles")}
         onKeyDown={(e) => {
           e.preventDefault();
         }}

@@ -4,17 +4,13 @@ import java.io.File;
 import java.util.*;
 
 import com.server.backend.dto.request.UpdateUserRequest;
-import com.server.backend.dto.response.PaginationResponse;
-import com.server.backend.dto.response.UserInfoResponse;
+import com.server.backend.dto.UserDTO;
 import com.server.backend.enums.FileQuality;
 import com.server.backend.enums.UserRole;
-import com.server.backend.models.Role;
 import com.server.backend.utils.FileHandler;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
-import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import com.server.backend.models.User;
@@ -25,8 +21,6 @@ import java.util.stream.Collectors;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -42,7 +36,7 @@ public class UserService implements UserDetailsService {
     // get
     public Page<?> getAllUser(Map<String, String> params) {
         Pageable pageable = null;
-        Page<UserInfoResponse> users = null;
+        Page<UserDTO> users = null;
         if (params.get("limit") == null) {
             params.put("limit", "5");
         }
@@ -83,7 +77,6 @@ public class UserService implements UserDetailsService {
     @Transactional
     public User updateByRequest(String id, UpdateUserRequest request) {
         User user = this.getUserById(id).orElse(null);
-        System.out.println(request);
 
         if(request.getAvatar() != null) {
             File avatar = FileHandler.multipartToFile(request.getAvatar());
@@ -92,7 +85,6 @@ public class UserService implements UserDetailsService {
         }
         user.setState(request.getState());
         user.setName(request.getName());
-        System.out.println(request.getUserRoles().stream().map(role -> roleService.getRoleByName(UserRole.valueOf(role))).collect(Collectors.toSet()));
         user.setUserRoles(request.getUserRoles().stream().map(role -> roleService.getRoleByName(UserRole.valueOf(role))).collect(Collectors.toSet()));
 
         user = this.saveOrUpdateUser(user);

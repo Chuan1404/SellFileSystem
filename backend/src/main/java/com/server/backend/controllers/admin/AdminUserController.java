@@ -1,16 +1,11 @@
 package com.server.backend.controllers.admin;
 
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.server.backend.dto.request.UpdateUserRequest;
 import com.server.backend.dto.response.ErrorResponse;
 import com.server.backend.dto.response.Message;
-import com.server.backend.dto.response.UserInfoResponse;
-import com.server.backend.enums.UserRole;
+import com.server.backend.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +24,7 @@ public class AdminUserController {
     @GetMapping("/")
     public ResponseEntity<?> getAllUser(@RequestParam Map<String, String> params) {
 
-        Page<User> pages = (Page<User>) userService.getAllUser(params);
+        Page<UserDTO> pages = (Page<UserDTO>) userService.getAllUser(params);
         if(pages == null) {
             return ResponseEntity.badRequest().body(new ErrorResponse("Parameter are not valid"));
         }
@@ -42,13 +37,13 @@ public class AdminUserController {
 
         if(user == null)
             return ResponseEntity.badRequest().body(new Error("User is not exist"));
-        return ResponseEntity.ok(new UserInfoResponse(user));
+        return ResponseEntity.ok(new UserDTO(user));
     }
     @PostMapping("/update/{id}")
     public ResponseEntity<?> updateUser(@PathVariable String id, UpdateUserRequest request) {
         User user = userService.updateByRequest(id, request);
 
-        return ResponseEntity.ok(new UserInfoResponse(user));
+        return ResponseEntity.ok(new UserDTO(user));
     }
     @GetMapping("/delete/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable String id) {
