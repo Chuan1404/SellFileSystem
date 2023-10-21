@@ -1,5 +1,6 @@
 package com.server.backend.utils;
 
+import com.server.backend.enums.FileType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,10 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class FileHandler {
-    protected int low;
-    protected int medium;
-    protected int high;
-    protected int minimumPixels;
     public abstract ResponseEntity<?> checkFile(File file);
     public abstract File resizedFile(File file, double targetWidth);
 
@@ -50,5 +47,22 @@ public abstract class FileHandler {
             return null;
         }
         return file;
+    }
+
+    public String getFileExtension(File file) {
+        String name = file.getName();
+        int lastIndexOf = name.lastIndexOf(".");
+        if (lastIndexOf == -1) {
+            return ""; // empty extension
+        }
+        return name.substring(lastIndexOf + 1);
+    }
+
+    public static FileType getTypeFromMultiPart(MultipartFile multipartFile) {
+        if(multipartFile.getContentType().compareTo("image/png") == 0)
+            return FileType.PNG;
+        if(multipartFile.getContentType().compareTo("image/jpeg") == 0)
+            return FileType.JPEG;
+        return null;
     }
 }

@@ -6,7 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 
-import com.amazonaws.services.s3.model.PutObjectResult;
+import com.amazonaws.services.s3.model.*;
 import com.server.backend.enums.FileQuality;
 import com.server.backend.models.FileUploaded;
 import com.server.backend.repositories.FileRepository;
@@ -16,9 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
 
 import javax.imageio.ImageIO;
@@ -34,6 +31,14 @@ public class AmazonS3Service {
     @Autowired
     private AmazonS3 amazonS3;
 
+    public S3Object getS3Object(FileUploaded fileUploaded) {
+        String objectKey = fileUploaded.getRoot().split(".com/")[1]; // Replace with your actual object key
+        GetObjectRequest getObjectRequest = new GetObjectRequest(privateBucket, objectKey);
+        S3Object s3object = amazonS3.getObject(getObjectRequest);
+
+        return s3object;
+    }
+
     public String uploadFile(File file, FileQuality quality) {
         String currentBucket = quality != FileQuality.ROOT ? publicBucket : privateBucket;
         // bucket/type/folder/file
@@ -41,7 +46,6 @@ public class AmazonS3Service {
 
         PutObjectRequest putObjectRequest = new PutObjectRequest(currentBucket, path, file);
         PutObjectResult result = amazonS3.putObject(putObjectRequest);
-
         URL s3Url = amazonS3.getUrl(currentBucket, path);
         file.delete();
 
@@ -49,7 +53,6 @@ public class AmazonS3Service {
     }
 
     public byte[] downloadFile(FileUploaded fileUploaded) {
-        System.out.println(fileUploaded.getRoot().split(".com/")[1]);
         // bucket/type/folder/file
         S3Object s3Object = amazonS3.getObject(privateBucket, fileUploaded.getRoot().split(".com/")[1]);
         S3ObjectInputStream inputStream = s3Object.getObjectContent();
@@ -61,5 +64,20 @@ public class AmazonS3Service {
         }
 
         return null;
+    }
+
+    public void deleteFile(FileUploaded fileUploaded) {
+        for (S3ObjectSummary file : amazonS3.listObjects(privateBucket, fileUploaded.getRoot().split(".com/")[1]).getObjectSummaries()){
+            amazonS3.deleteObject(privateBucket, file.getKey());
+        }
+        for (S3ObjectSummary file : amazonS3.listObjects(publicBucket, fileUploaded.getDisplay().split(".com/")[1]).getObjectSummaries()){
+            amazonS3.deleteObject(publicBucket, file.getKey());
+        }
+        for (S3ObjectSummary file : amazonS3.listObjects(publicBucket, fileUploaded.getMedium().split(".com/")[1]).getObjectSummaries()){
+            amazonS3.deleteObject(publicBucket, file.getKey());
+        }
+        for (S3ObjectSummary file : amazonS3.listObjects(publicBucket, fileUploaded.getHigh().split(".com/")[1]).getObjectSummaries()){
+            amazonS3.deleteObject(publicBucket, file.getKey());
+        }
     }
 }

@@ -31,7 +31,7 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequest request)  throws MessagingException, UnsupportedEncodingException {
         boolean isSuccess = authenticationService.register(request);
         if (!isSuccess)
-            return ResponseEntity.badRequest().body(ErrorResponse.builder().error("User existed").build());
+            return ResponseEntity.badRequest().body(new ErrorResponse("User existed"));
         return ResponseEntity.ok(new Message("Register success. Please verify your account in email"));
     }
 
@@ -65,7 +65,17 @@ public class AuthController {
 
     @PostMapping("/google")
     public ResponseEntity<?> google(@RequestBody GoogleRequest request) {
-        AuthenticationResponse response = authenticationService.google(request);
+        AuthenticationResponse response = authenticationService.google(request, true);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/admin/google")
+    public ResponseEntity<?> googleAdmin(@RequestBody GoogleRequest request) {
+        AuthenticationResponse response = authenticationService.google(request, false);
+        ErrorResponse errorResponse = checkError(response);
+        if(errorResponse != null)
+            return ResponseEntity.badRequest().body(errorResponse);
 
         return ResponseEntity.ok(response);
     }

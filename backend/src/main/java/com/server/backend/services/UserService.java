@@ -1,14 +1,20 @@
 package com.server.backend.services;
 
 import java.io.File;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import com.server.backend.dto.request.UpdateUserRequest;
 import com.server.backend.dto.UserDTO;
+import com.server.backend.dto.response.ErrorResponse;
 import com.server.backend.enums.FileQuality;
 import com.server.backend.enums.UserRole;
 import com.server.backend.utils.FileHandler;
+import com.server.backend.utils.Pagination;
 import jakarta.transaction.Transactional;
+import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
+import org.hibernate.sql.exec.ExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -33,27 +39,18 @@ public class UserService implements UserDetailsService {
     @Autowired
     private AmazonS3Service amazonS3Service;
 
+    @Autowired
+    private Pagination pagination;
     // get
-    public Page<?> getAllUser(Map<String, String> params) {
-        Pageable pageable = null;
-        Page<UserDTO> users = null;
-        if (params.get("limit") == null) {
-            params.put("limit", "5");
-        }
+    public Page<UserDTO> getAllUser(Map<String, String> params) {
 
-        if (params.get("page") == null || Integer.parseInt(params.get("page")) < 1) {
-            params.put("page", "1");
-        }
+        // pagination
+        Pageable pageable = pagination.page(params.get("page"), params.get("limit"));
 
         if (params.get("role") == null)
             params.put("role", UserRole.ROLE_CUSTOMER.name());
-        try {
-            pageable = PageRequest.of(Integer.parseInt(params.get("page")) - 1, Integer.parseInt(params.get("limit")));
-            users = userRepository.findByRoles(UserRole.valueOf(params.get("role")), pageable);
-        } catch (Exception exception) {
-            System.out.println(exception.getMessage());
-            return null;
-        }
+        Page<UserDTO> users = userRepository.findByRoles(UserRole.valueOf(params.get("role")), pageable);
+
         return users;
     }
 
@@ -92,12 +89,13 @@ public class UserService implements UserDetailsService {
     }
 
     // delete
-    public boolean deleteUser(String id) {
+    public ErrorResponse deleteUser(String id) {
         try {
             userRepository.deleteById(id);
-            return true;
-        } catch (Exception error) {
-            return false;
+            return null;
+        }
+        catch (Exception error) {
+            return new ErrorResponse(error.getMessage());
         }
     }
 

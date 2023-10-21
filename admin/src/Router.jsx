@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import {
   Auth,
   Chat,
+  EmployeeCreate,
   FileCreate,
   FileList,
   Mail,
@@ -19,6 +20,7 @@ export default function Router() {
       <Route path="/user/">
         <Route path="employee" element={<Title title={"Quản lý nhân viên"}><User role="ROLE_EDITOR" /></Title>} />
         <Route path="customer" element={<Title title={"Quản lý khách hàng"}><User role="ROLE_CUSTOMER" /></Title>} />
+        <Route path="create" element={<Title title={"Thêm nhân viên"}><EmployeeCreate /></Title>} />
       </Route>
 
       {/* <Route path="/employee/">

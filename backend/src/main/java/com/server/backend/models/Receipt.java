@@ -30,7 +30,9 @@ public class Receipt {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
+
     @ManyToMany
     @JoinTable(name = "receipt_file", joinColumns = @JoinColumn(name = "receipt_id"), inverseJoinColumns = @JoinColumn(name = "file_id"))
     private Set<FileUploaded> files;
+
 }

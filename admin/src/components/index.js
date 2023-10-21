@@ -10,6 +10,8 @@ import FileUploader from "./file/FileUploader";
 import FileProcess from "./file/FileProcess";
 import InputTags from "./InputTags";
 import Title from "./Title";
+import BarChart from "./BarChart";
+import MyAlert from "./MyAlert";
 
 export {
     NavBar,
@@ -23,5 +25,7 @@ export {
     FileUploader,
     FileProcess,
     InputTags,
-    Title
+    Title,
+    BarChart,
+    MyAlert
 }

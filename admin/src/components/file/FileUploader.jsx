@@ -64,10 +64,10 @@ const FileUploader = ({ width = "100%" }) => {
         width={width}
         className="FileUploader__loader"
       >
-        <Typography variant="body1">Choose file</Typography>
+        <Typography variant="body1">Hãy upload file của bạn</Typography>
         <Button variant="contained" component="label">
           <input type="file" hidden onChange={handleChange} multiple />
-          Select Files
+          Upload
         </Button>
       </Stack>
       <Box className="FileUploader__list">

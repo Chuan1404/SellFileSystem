@@ -22,14 +22,22 @@ import {
   useTheme,
 } from "@mui/material";
 import { useState } from "react";
-import { useSelector } from "react-redux";
 import Authenticated from "./Authenticated";
+import { useDispatch, useSelector } from "react-redux";
+import { signOut } from "../store/slices/authSlice";
 
 const Header = ({ handleNavBarControlClick, ...props }) => {
   const theme = useTheme();
+  const dispatch = useDispatch();
   const [isRightMenuShow, setRightMenuShow] = useState(false);
+  const { user } = useSelector((store) => store.auth);
+
   const handleRightClick = () => {
     setRightMenuShow(!isRightMenuShow);
+  };
+
+  const handleSignout = () => {
+    dispatch(signOut());
   };
   return (
     <Authenticated>
@@ -47,7 +55,7 @@ const Header = ({ handleNavBarControlClick, ...props }) => {
         >
           <Box>
             <Typography color={"primary"} variant="h3">
-              Logo
+              DevChu
             </Typography>
           </Box>
 
@@ -66,31 +74,31 @@ const Header = ({ handleNavBarControlClick, ...props }) => {
           sx={{ ml: "auto", height: "100%" }}
           spacing={2}
         >
-          <Box>
+          {/* <Box>
             <Badge badgeContent={4} color="primary">
               <Notifications color="white" />
             </Badge>
-          </Box>
+          </Box> */}
           <Box>
             <IconButton onClick={handleRightClick}>
-              <Avatar>Â</Avatar>
+              <Avatar src={user.avatar} />
               <Settings color="white" />
             </IconButton>
             {isRightMenuShow && (
               <Paper className="header__right--paper">
                 <MenuList>
-                  <MenuItem>
+                  {/* <MenuItem>
                     <ListItemIcon>
                       <Person fontSize="small" />
                     </ListItemIcon>
-                    <ListItemText>User info</ListItemText>
-                  </MenuItem>
+                    <ListItemText>Thông tin người dùng</ListItemText>
+                  </MenuItem> */}
                   <Divider />
-                  <MenuItem>
+                  <MenuItem onClick={handleSignout}>
                     <ListItemIcon>
                       <Logout fontSize="small" />
                     </ListItemIcon>
-                    <ListItemText>Sign out</ListItemText>
+                    <ListItemText>Đăng xuất</ListItemText>
                   </MenuItem>
                 </MenuList>
               </Paper>
@@ -98,7 +106,7 @@ const Header = ({ handleNavBarControlClick, ...props }) => {
           </Box>
         </Stack>
       </Stack>
-    </Authenticated >
+    </Authenticated>
   );
 };
 

@@ -16,6 +16,7 @@ import { Authenticated, Table } from "../components";
 import useQuery from "../hooks/useQuery";
 import { userService } from "../services";
 import { closeForm } from "../store/slices/pageSlice";
+import { ErrorMessage } from "@hookform/error-message";
 
 export default function User({ role }) {
   const { search } = useLocation();
@@ -87,9 +88,9 @@ export default function User({ role }) {
               color={
                 state === "VERIFIED"
                   ? "success"
-                  : state === "UNVERIFIED"
-                  ? "default"
-                  : "error"
+                  : state === "BANNED"
+                  ? "error"
+                  : "default"
               }
             />
           );
@@ -104,19 +105,20 @@ export default function User({ role }) {
     setData: setUserData,
   } = useQuery(() => userService.getUsers(search, role), [search, role]);
 
-  const handleOpenForm = (row) => {
-    delete row.createdDate;
-    delete row.email;
-    delete row.id;
-  };
   const handleDelete = async (id) => {
-    await userService.deleteUser(id);
-    let filterData = userData.content.filter((item) => item.id != id);
-    setUserData({ ...userData, content: filterData });
+    const res = await userService.deleteUser(id);
+    console.log(res)
+    if(!res.error) {
+      let filterData = userData.content.filter((item) => item.id != id);
+      setUserData({ ...userData, content: filterData });
+    }
+    else {
+      alert(res.error)
+    }
+    
   };
 
   const handleEdit = (editedData) => {
-    console.log(editedData)
     if (editedData.error) return alert(editedData.error);
     setUserData({
       ...userData,
@@ -130,21 +132,15 @@ export default function User({ role }) {
   return (
     <Authenticated>
       <main id="user_page">
-        <Stack
-          direction={"row"}
-          alignContent={"center"}
-          justifyContent={"space-between"}
-        >
-          <Typography variant="h3">Danh sách tài khoản</Typography>
-          <Button variant="contained">Thêm tài khoản</Button>
-        </Stack>
+        <Typography textAlign={"center"} variant="h3">
+          Danh sách tài khoản
+        </Typography>
         <Divider sx={{ marginTop: 2, marginBottom: 4 }} />
         <Table
           columns={columns}
           data={userData}
           isLoading={isLoading}
           FormEdit={FormEdit}
-          handleOpenForm={handleOpenForm}
           handleDelete={handleDelete}
           handleEdit={handleEdit}
         />
@@ -161,7 +157,8 @@ function FormEdit({ defaultValues = {}, handleEdit = () => {} }) {
     handleSubmit,
     getValues,
     setValue,
-    // formState: { errors },
+    formState: { errors },
+    setError,
   } = useForm({
     defaultValues: defaultValues,
   });
@@ -173,7 +170,8 @@ function FormEdit({ defaultValues = {}, handleEdit = () => {} }) {
   };
 
   const onSubmit = async (data) => {
-    console.log(data);
+    if (data.userRoles.length < 1)
+      return setError("userRoles", ["Không được để trống"]);
 
     let formData = new FormData();
     typeof data.avatar !== "string" &&
@@ -212,12 +210,19 @@ function FormEdit({ defaultValues = {}, handleEdit = () => {} }) {
         size="small"
         defaultValue={getValues("name")}
         label={"name"}
-        {...register("name")}
+        {...register("name", { required: "This is required." })}
         margin="normal"
+      />
+      <ErrorMessage
+        errors={errors}
+        name={"name"}
+        render={({ message }) => (
+          <Typography color="primary">{message}</Typography>
+        )}
       />
       <Autocomplete
         disablePortal
-        options={["VERIFIED", "UNVERIFIED", "BANNED"]}
+        options={["VERIFIED", "BANNED"]}
         defaultValue={getValues("state")}
         onKeyDown={(e) => {
           e.preventDefault();
@@ -228,8 +233,15 @@ function FormEdit({ defaultValues = {}, handleEdit = () => {} }) {
             size="small"
             margin="normal"
             label="state"
-            {...register("state")}
+            {...register("state", { required: "This is required." })}
           />
+        )}
+      />
+      <ErrorMessage
+        errors={errors}
+        name={"state"}
+        render={({ message }) => (
+          <Typography color="primary">{message}</Typography>
         )}
       />
       <Autocomplete
@@ -241,7 +253,9 @@ function FormEdit({ defaultValues = {}, handleEdit = () => {} }) {
           e.preventDefault();
         }}
         {...register("userRoles")}
-        onChange={(e, values) => setValue("userRoles", values)}
+        onChange={(e, values) => {
+          setValue("userRoles", values);
+        }}
         renderInput={(params) => (
           <TextField
             {...params}
@@ -250,7 +264,7 @@ function FormEdit({ defaultValues = {}, handleEdit = () => {} }) {
             label="userRoles"
           />
         )}
-        renderTags={(tagValues, getTagProps) => {
+        renderTags={(tagValues) => {
           return tagValues.map((option, index) => {
             // option = option.indexOf('ROLE_') == -1? option: option.split('_')[1]
             return (
@@ -269,6 +283,13 @@ function FormEdit({ defaultValues = {}, handleEdit = () => {} }) {
             );
           });
         }}
+      />
+      <ErrorMessage
+        errors={errors}
+        name={"userRoles"}
+        render={({ message }) => (
+          <Typography color="primary">{errors.userRoles?.[0]}</Typography>
+        )}
       />
       <Button type="submit" variant="contained">
         Xác nhận

@@ -1,12 +1,13 @@
 package com.server.backend.services;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.server.backend.models.Tag;
@@ -17,12 +18,13 @@ public class TagService {
     @Autowired
     private TagRepository tagRepository;
 
-    public List<Tag> getAllTags() {
-        return tagRepository.findAll();
+
+    public List<String> getTagsByKw(String kw) {
+        return tagRepository.findByKw(kw);
     }
 
-    public Tag getTagById(int id) {
-        return tagRepository.findById(id).get();
+    public List<Tag> getTop() {
+        return tagRepository.findTop();
     }
 
     @Transactional

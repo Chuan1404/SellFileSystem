@@ -1,12 +1,19 @@
-import { Laptop, PhoneAndroid, Tablet } from "@mui/icons-material";
+import {
+  DevicesOther,
+  Laptop,
+  PhoneAndroid,
+  Tablet,
+} from "@mui/icons-material";
 import {
   Box,
   Button,
   Paper,
   Stack,
+  TextField,
   ToggleButton,
   ToggleButtonGroup,
   Typography,
+  switchClasses,
 } from "@mui/material";
 import React, { useRef, useState } from "react";
 import fileService from "../services/fileService";
@@ -14,25 +21,63 @@ import FileSaver from "file-saver";
 
 const FilePaid = ({ data, ...res }) => {
   const [device, setDevice] = useState("laptop");
+  const [definition, setDefinition] = useState({
+    width: data.file.width,
+    height: data.file.height,
+  });
   const aRef = useRef(null);
+
   const handleDevice = (event, newDevice) => {
-    if (newDevice != null) {
-      setDevice(newDevice);
+    let width, height;
+    let rate = data.file.width / data.file.height;
+    rate = rate < 1 ? rate : 1 / rate;
+
+    if (newDevice != "other") {
+      switch (newDevice) {
+        case "phone":
+          width = 640;
+          height = Math.round(640 * rate);
+          break;
+        case "tablet":
+          width = 1280;
+          height = Math.round(1280 * rate);
+          break;
+        case "laptop":
+          width = 1920;
+          height = Math.round(1920 * rate);
+          break;
+      }
+      if (data.file.width - data.file.height < 0) {
+        let tmp = width;
+        width = height;
+        height = tmp;
+      }
+      setDefinition({
+        width,
+        height,
+      });
+    }
+    newDevice != null && setDevice(newDevice);
+  };
+  const handleDownload = async () => {
+    const res = await fileService.downloadFile(data.file.id, definition);
+    if (res.byteLength > 0) {
+      const blob = new Blob([res]);
+      FileSaver.saveAs(blob, "myImage.jpg");
+    } else {
+      alert("invalid");
     }
   };
 
-  const handleDownload = async () => {
-    const res = await fileService.downloadFile(data.file.id);
-    const blob = new Blob([res]);
-    console.log(res)
-    console.log(blob)
+  const handleInputChange = (e) => {
+    if (e.target.value > data.file.width) return;
 
-    FileSaver.saveAs(blob, 'myImage.jpg');
-    
-    // aRef.current.href= URL.createObjectURL(blob)
-    // aRef.current.download = 'image.jpg';
-    // aRef.current.click();
-
+    setDefinition({
+      width: e.target.value,
+      height: Math.round(
+        e.target.value * (data.file?.height / data.file?.width)
+      ),
+    });
   };
 
   return (
@@ -49,6 +94,7 @@ const FilePaid = ({ data, ...res }) => {
 
         <Stack width={"100%"}>
           <Typography variant="h4">{data.file.title}</Typography>
+
           <ToggleButtonGroup
             value={device}
             exclusive
@@ -65,20 +111,64 @@ const FilePaid = ({ data, ...res }) => {
             <ToggleButton value="phone" aria-label="phone">
               <PhoneAndroid />
             </ToggleButton>
+            <ToggleButton value="other" aria-label="other">
+              <DevicesOther />
+            </ToggleButton>
           </ToggleButtonGroup>
+
+          {device == "other" && (
+            <Stack
+              marginBottom={3}
+              direction={"row"}
+              alignItems={"center"}
+              spacing={2}
+            >
+              <Typography>Kích thước:</Typography>
+              <TextField
+                onInput={handleInputChange}
+                value={definition.width}
+                placeholder={`Tối đa ${data.file?.width} px`}
+                type="number"
+                size="small"
+              />
+              <Typography>x</Typography>
+              <TextField
+                value={definition.height}
+                placeholder={`Tối đa ${data.file?.height} px`}
+                disabled
+                type="number"
+                size="small"
+              />
+            </Stack>
+          )}
+
           <Typography variant="h6">{`Có hiệu lực đến: Ngày ${data.expireDate[2]} Tháng ${data.expireDate[1]} Năm ${data.expireDate[0]}`}</Typography>
 
-          <Button
-            variant="contained"
-            sx={{ marginTop: "auto", marginLeft: "auto" }}
-            onClick={handleDownload}
-          >
-            Tải về
-          </Button>
+          {isValid(data.expireDate) && (
+            <Button
+              variant="contained"
+              sx={{ marginTop: "auto", marginLeft: "auto" }}
+              onClick={handleDownload}
+            >
+              Tải về
+            </Button>
+          )}
         </Stack>
       </Stack>
     </Paper>
   );
 };
 
+function isValid(data) {
+  const fileDate = new Date(
+    data[0],
+    data[1] - 1,
+    data[2],
+    data[3],
+    data[4],
+    data[5]
+  );
+  const today = new Date();
+  return fileDate - today > 0;
+}
 export default FilePaid;

@@ -1,14 +1,22 @@
 package com.server.backend.services;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import com.server.backend.dto.request.*;
+import com.server.backend.dto.response.ErrorResponse;
+import com.server.backend.dto.response.Message;
 import com.server.backend.enums.AccountState;
+import com.server.backend.enums.FileQuality;
 import com.server.backend.models.VerificationCode;
+import com.server.backend.utils.FileHandler;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,10 +24,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.server.backend.dto.request.RefreshTokenRequest;
-import com.server.backend.dto.request.RegisterRequest;
-import com.server.backend.dto.request.SignInRequest;
-import com.server.backend.dto.request.GoogleRequest;
 import com.server.backend.dto.response.AuthenticationResponse;
 import com.server.backend.enums.UserRole;
 import com.server.backend.models.RefreshToken;
@@ -51,6 +55,9 @@ public class AuthenticationService {
 
     @Autowired
     private VerificationCodeService verificationCodeService;
+
+    @Autowired
+    private AmazonS3Service amazonS3Service;
 
     public boolean register(RegisterRequest request) throws MessagingException, UnsupportedEncodingException {
         User userExist = userService.getUserByEmail(request.getEmail()).orElse(null);
@@ -114,9 +121,13 @@ public class AuthenticationService {
                 .build();
     }
 
-    public AuthenticationResponse google(GoogleRequest request) {
+    public AuthenticationResponse google(GoogleRequest request, boolean isAllowCustomer) {
         User user = userService.getUserByEmail(request.getEmail()).orElse(null);
-        if (user == null) {
+
+        if (!isAllowCustomer && user.getUserRoles().contains(roleService.getRoleByName(UserRole.ROLE_CUSTOMER)))
+            return null;
+
+        if (user == null && isAllowCustomer) {
             user = User.builder()
                     .name(request.getName())
                     .email(request.getEmail())
@@ -129,14 +140,44 @@ public class AuthenticationService {
             userService.saveOrUpdateUser(user);
         }
 
-        var jwtToken = jwtService.generateToken(user);
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
+        if (user != null) {
+            var jwtToken = jwtService.generateToken(user);
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
 
-        return AuthenticationResponse.builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken.getToken())
-                .state(user.getState())
-                .build();
+            return AuthenticationResponse.builder()
+                    .accessToken(jwtToken)
+                    .refreshToken(refreshToken.getToken())
+                    .state(user.getState())
+                    .build();
+        } else return null;
+
+    }
+
+    public ResponseEntity addEmployee(AddEmployeeRequest request) throws MessagingException, UnsupportedEncodingException {
+        User user = userService.getUserByEmail(request.getEmail()).orElse(null);
+
+        if (user == null) {
+            var builder = User
+                    .builder()
+                    .name(request.getName())
+                    .email(request.getEmail())
+                    .state(AccountState.UNVERIFIED)
+                    .password(passwordEncoder.encode(request.getPassword()))
+                    .userRoles(request.getUserRoles().stream().map(role -> roleService.getRoleByName(UserRole.valueOf(role))).collect(Collectors.toSet()))
+                    .createdDate(LocalDateTime.now());
+            if (request.getAvatar() != null) {
+                File avatar = FileHandler.multipartToFile(request.getAvatar());
+                String url = amazonS3Service.uploadFile(avatar, FileQuality.AVATAR);
+                builder.avatar(url);
+            }
+            user = builder.build();
+            userService.saveOrUpdateUser(user);
+        }
+        else return ResponseEntity.badRequest().body(new ErrorResponse("Account existed"));
+        this.sendVerificationEmail(user);
+
+
+        return ResponseEntity.ok(new Message("Create success "));
     }
 
     public void sendVerificationEmail(User user) throws MessagingException, UnsupportedEncodingException {
@@ -145,12 +186,15 @@ public class AuthenticationService {
         String toAddress = user.getEmail();
         String fromAddress = "7vnrong@gmail.com";
         String senderName = "DevChu Company";
-        String subject = "Verify your account";
-        String content = "Dear [[name]],<br>"
-                + "Please click the link below to verify your registration:<br>"
-                + "<h3><a href=\"[[URL]]\" target=\"_self\">VERIFY</a></h3>"
-                + "Thank you,<br>"
-                + "Your company name.";
+        String subject = "Xác thực tài khoản của bạn";
+        String content = "Kính gửi [[name]],<br><br>"
+                + "Cảm ơn bạn vì đã dành sự quan tâm và tin tưởng tới dịch vụ của chúng tôi.<br>"
+                + "Trải nghiệm của khách hàng chính là động lực to lớn nhất của chùng tôi và nhất định chúng tôi sẽ mang đến cho bạn trải nghiệm tốt nhất. "
+                + "Chúng tôi luôn nỗ lực không ngừng, hướng tới mục tiêu phát triển bền vững, chú trọng xây dựng các chính sách chăm sóc khách hàng, mang lại những giá trị thiết thực để luôn làm hài lòng khách hàng ở mức cao nhất nhằm đáp lại tình cảm và sự tin yêu của bạn.<br>"
+                + "Một lần nữa cảm ởn bạn và đừng quên xác nhận tài khoản của bạn bằng link bên dưới để trải nghiệm dịch vụ:<br>"
+                + "<h3><a href=\"[[URL]]\" target=\"_self\">Trải nghiệm dịch vụ tại đây</a></h3>"
+                + "Thân ái,<br>"
+                + "DevChu Company.";
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
 

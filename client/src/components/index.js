@@ -15,7 +15,7 @@ import FileInCart from "./File/FileInCart";
 import Receipt from "./Receipt";
 import FilePaid from "./FilePaid";
 import Authenticated from "./AuthBox/Authenticated";
-
+import Title from './Title'
 
 export {
     Header,
@@ -34,5 +34,6 @@ export {
     FileInCart,
     Receipt,
     FilePaid,
-    Authenticated
+    Authenticated,
+    Title,
 }

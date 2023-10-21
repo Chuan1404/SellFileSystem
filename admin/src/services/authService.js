@@ -22,6 +22,9 @@ const authService = {
   refreshToken(form) {
     return postData(`${API}/auth/refresh-token`, form);;
   },
+  google(form) {
+    return postData(`${API}/auth/admin/google`, form);
+  }
 };
 
 export default authService;

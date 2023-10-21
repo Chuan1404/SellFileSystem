@@ -22,12 +22,12 @@ import { openForm } from "../store/slices/pageSlice";
 const Table = ({
   columns = [],
   data = {},
-  handleOpenForm = (row) => {},
   handleEdit = (editedData) => {},
   handleDelete,
   FormEdit,
   isLoading,
   disableEdit = false,
+  disableDelete = false,
   ...props
 }) => {
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });
@@ -37,14 +37,15 @@ const Table = ({
   const dispatch = useDispatch();
 
   const onEditTableClick = (row) => {
-    handleOpenForm(row)
-    dispatch(openForm(<FormEdit defaultValues={row} handleEdit={handleEdit} />));
+    dispatch(
+      openForm(<FormEdit defaultValues={row} handleEdit={handleEdit} />)
+    );
   };
 
   const onDeleteTableClick = (row) => {
     setIsDeleteBoxShow(true);
     setSelectedID(row._valuesCache.id);
-  }
+  };
 
   useEffect(() => {
     navigate(
@@ -80,13 +81,13 @@ const Table = ({
               </Tooltip>
             )}
 
-            <Tooltip arrow placement="right" title="Delete">
-              <IconButton
-                onClick={() => onDeleteTableClick(row)}
-              >
-                <Delete />
-              </IconButton>
-            </Tooltip>
+            {!disableDelete && (
+              <Tooltip arrow placement="right" title="Delete">
+                <IconButton onClick={() => onDeleteTableClick(row)}>
+                  <Delete />
+                </IconButton>
+              </Tooltip>
+            )}
           </Box>
         )}
         onPaginationChange={setPagination}

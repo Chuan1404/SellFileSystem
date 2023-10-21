@@ -5,14 +5,18 @@ import notSupport from "../../assets/images/errors/not-support.gif";
 import { API } from "../../assets/js/constants";
 import { callWithToken } from "../../utils/fetchData";
 import InputTags from "../InputTags";
+import { useDispatch } from "react-redux";
+import {openAlert} from '../../store/slices/pageSlice'
 
 const FileProcess = ({ data, handleDelete }) => {
   let tagRef = useRef(null);
   let titleRef = useRef(null);
   let priceRef = useRef(0);
+  const dispatch = useDispatch()
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async () => {
+    if(titleRef.current.value == '' || priceRef.current.value < 10000 || tagRef.current.value == '') return
     setIsLoading(true);
     let form = new FormData();
     form.append("file", data.file);
@@ -23,12 +27,14 @@ const FileProcess = ({ data, handleDelete }) => {
       method: "POST",
       body: form,
     });
+    
     if (!response.error) {
       handleDelete({ ...data, message: "uploaded" });
       setIsLoading(false);
-    } else {
-      console.log("Không xóa", data);
-    }
+      dispatch(
+        openAlert({ type: "success", message: "Đã thêm sản phẩm vào giỏ hàng" })
+      );
+    } 
   };
   return (
     <Stack className="FileProcess" direction={"row"} spacing={2}>
@@ -57,7 +63,7 @@ const FileProcess = ({ data, handleDelete }) => {
         ) : (
           <Stack justifyContent={"flex-start"} flexGrow={1}>
             <Typography variant="h6" marginBottom={2}>
-              Chia sẻ nó với mọi người
+              Chia sẻ với mọi người
             </Typography>
             <TextField
               inputRef={titleRef}
@@ -65,10 +71,11 @@ const FileProcess = ({ data, handleDelete }) => {
               size="small"
               sx={{ marginBottom: 4, width: 300 }}
             />
+            
              <TextField
               inputRef={priceRef}
               type="number"
-              label="Giá (VNĐ)"
+              label="Giá (Tối thiểu 10.000 VNĐ)"
               size="small"
               sx={{ marginBottom: 4, width: 300 }}
             />

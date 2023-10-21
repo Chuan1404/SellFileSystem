@@ -1,5 +1,6 @@
 import { API } from "../assets/js/constants";
 import { callWithToken, getData } from "../utils/fetchData";
+import queryLocation from "../utils/queryLocation";
 
 const fileService = {
   getFiles(search = "") {
@@ -9,8 +10,9 @@ const fileService = {
   getFile(id) {
     return getData(`${API}file/${id}`);
   },
-  downloadFile(url) {
-    return callWithToken(`${API}file/download/${url}`, {type: 'text'})
+  downloadFile(url, definition = {}) {
+    let query = queryLocation.toString(definition)
+    return callWithToken(`${API}file/download/${url}?${query}`, {type: 'text'})
   }
 };
 

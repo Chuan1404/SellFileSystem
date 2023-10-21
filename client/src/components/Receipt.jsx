@@ -39,14 +39,14 @@ const Receipt = ({ data, ...res }) => {
                   })}
                 </TableCell>
                 <TableCell scope="row">12 tháng</TableCell>
-                <TableCell scope="row">
+                {/* <TableCell scope="row">
                   <Link>
                     <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                      <Avatar src={row.user.avatar} />
-                      <Typography>{row.user.name}</Typography>
+                      <Avatar src={row.user?.avatar} />
+                      <Typography>{row.user?.name || "không xác định"}</Typography>
                     </Stack>
                   </Link>
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             ))}
           </TableBody>

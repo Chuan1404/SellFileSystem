@@ -23,11 +23,14 @@ public class FileUploadedDTO {
     private Boolean isActive;
     private String root;
     private String display;
-    private String low;
     private String medium;
     private String high;
+    private long size;
+    private int width;
+    private int height;
     private UserDTO user;
     private Set<String> tags;
+    private String type;
     public  FileUploadedDTO(FileUploaded fileUploaded) {
         this.id = fileUploaded.getId();
         this.title = fileUploaded.getTitle();
@@ -35,10 +38,16 @@ public class FileUploadedDTO {
         this.isActive = fileUploaded.getIsActive();
         this.root = fileUploaded.getRoot();
         this.display = fileUploaded.getDisplay();
-        this.low = fileUploaded.getLow();
         this.medium = fileUploaded.getMedium();
         this.high = fileUploaded.getHigh();
-        this.user = new UserDTO(fileUploaded.getUser());
+        this.size = fileUploaded.getSize();
+        this.width = fileUploaded.getWidth();
+        this.height = fileUploaded.getHeight();
+        this.user = null;
         this.tags = fileUploaded.getTag().stream().map(tag -> tag.getName().toString()).collect(Collectors.toSet());
+        this.type = fileUploaded.getType().toString();
+        if(fileUploaded.getUser() != null) {
+            this.user = new UserDTO(fileUploaded.getUser());
+        }
     }
 }

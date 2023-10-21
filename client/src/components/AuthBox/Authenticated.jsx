@@ -5,7 +5,6 @@ import { closeAuth, openAuth } from "../../store/slices/pageSlice";
 const Authenticated = ({ children }) => {
   const { isLogin } = useSelector((store) => store.auth);
   const dispatch = useDispatch();
-  console.log(isLogin)
   useEffect(() => {
     if (!isLogin) {
       dispatch(openAuth());

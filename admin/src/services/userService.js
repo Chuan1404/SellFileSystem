@@ -9,8 +9,14 @@ const userService = {
     if(search == '') search = '?'
     return callWithToken(`${ADMIN_API}/user/${search}&role=${role}`)
   },
+  addUser(form) {
+    return callWithToken(`${ADMIN_API}/user/add`, {
+      method: "POST",
+      body: form,
+    })
+  },
   deleteUser(id) {
-    return getData(`${ADMIN_API}/user/delete/${id}`)
+    return callWithToken(`${ADMIN_API}/user/delete/${id}`)
   },
   updateUser(id, form) {
     return callWithToken(`${ADMIN_API}/user/update/${id}`, {

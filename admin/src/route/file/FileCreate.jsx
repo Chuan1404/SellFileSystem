@@ -6,9 +6,9 @@ const FileCreate = () => {
   return (
     <Authenticated>
       <main id="file_create_page">
-        <Box>
-          <Typography variant="h3">Chọn File</Typography>
-        </Box>
+        <Typography textAlign={"center"} variant="h3">
+          Chọn File
+        </Typography>
         <Divider sx={{ marginTop: 2, marginBottom: 4 }} />
         <FileUploader />
       </main>

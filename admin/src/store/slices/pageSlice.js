@@ -5,7 +5,12 @@ const initialState = {
     isLoading: false,
     isFormShow: false,
   },
-  form: {}
+  form: {},
+  alert: {
+    message: "",
+    type: "success",
+    isOpen: false,
+  }
 };
 
 export const pageSlice = createSlice({
@@ -30,9 +35,17 @@ export const pageSlice = createSlice({
         state.popup[key] = false;
       });
     },
+    openAlert: (state, action) => {
+      state.alert.isOpen = true;
+      state.alert.message = action.payload.message;
+      state.alert.type = action.payload.type;
+    },
+    closeAlert: (state) => {
+      state.alert.isOpen = false;
+    },
   },
 });
 
-export const { openLoading, closeLoading, openForm, closeForm, closePopup } =
+export const { openLoading, closeLoading, openForm, closeForm, closePopup, openAlert, closeAlert } =
   pageSlice.actions;
 export default pageSlice.reducer;

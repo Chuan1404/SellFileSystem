@@ -11,12 +11,13 @@ import {
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import facebookLogo from "../assets/images/facebook.png";
-import googleLogo from "../assets/images/google.png";
 import { authService } from "../services";
 import { signIn } from "../store/slices/authSlice";
+import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
+import jwt_decode from "jwt-decode";
+
 const Oauth2Form = () => {
-  const dispatch = useDispatch();
+  const dispatcher = useDispatch();
   const {
     register,
     handleSubmit,
@@ -26,15 +27,22 @@ const Oauth2Form = () => {
     defaultValues: initialForms.field,
   });
 
+  const handleSuccess = (credentialResponse) => {
+    const data = jwt_decode(credentialResponse.credential);
+    if (!data.error) {
+      dispatcher({ type: "OAUTH2", payload: data });
+    } else {
+      setError("email", { message: data.error });
+    }
+  }
   // ---------- on form submit ----------
   const onSubmit = async (form) => {
     const response = await authService.signIn(form);
-    if(!response.error) {
-      dispatch(signIn(response))
-      dispatch({type: "FETCH_INFO"})
-    }
-    else {
-      setError('email', { message: response.error });
+    if (!response.error) {
+      dispatcher(signIn(response));
+      dispatcher({ type: "FETCH_INFO" });
+    } else {
+      setError("email", { message: response.error });
     }
   };
   return (
@@ -42,21 +50,23 @@ const Oauth2Form = () => {
       <Typography variant="h5" textAlign={"center"}>
         Chào mừng đến với website của chúng tôi
       </Typography>
-      <Divider />
+      <Divider sx={{ my: 2 }} />
       <Stack
         direction={"row"}
         alignItems={"baseline"}
         justifyContent={"center"}
         spacing={2}
       >
-        <IconButton>
-          <img width={36} src={googleLogo} />
-        </IconButton>
-        <IconButton>
-          <img width={36} src={facebookLogo} />
-        </IconButton>
+        <GoogleOAuthProvider clientId="1072091574856-ohepmk122fqm9sch172c7tr0mfagb5oh.apps.googleusercontent.com">
+        <GoogleLogin
+          onSuccess={credential => handleSuccess(credential)}
+          onError={() => {console.log('Login Failed')}}
+        />
+      </GoogleOAuthProvider>
+        
       </Stack>
-      <Divider />
+      <Divider sx={{ my: 2 }} />
+
       <Box
         className="form signInForm"
         component={"form"}
@@ -108,4 +118,5 @@ const initialForms = {
     password: { required: "This is required." },
   },
 };
+
 export default Oauth2Form;

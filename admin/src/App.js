@@ -1,10 +1,9 @@
 import { Box, Stack, ThemeProvider, createTheme } from "@mui/material";
-import { FormPopup, Header, Loading, NavBar, Popup } from "./components";
+import { FormPopup, Header, Loading, MyAlert, NavBar, Popup } from "./components";
 import { pink } from "@mui/material/colors";
 import { useRef } from "react";
 import { useSelector } from "react-redux";
 import Router from "./Router";
-
 function App() {
   const theme = createTheme({
     palette: {
@@ -34,6 +33,7 @@ function App() {
           <Router />
         </Stack>
       </Box>
+      <MyAlert />
       {Object.keys(popup).filter((key) => popup[key] === true).length > 0 && (
         <Popup>
           {popup.isLoading && <Loading />}

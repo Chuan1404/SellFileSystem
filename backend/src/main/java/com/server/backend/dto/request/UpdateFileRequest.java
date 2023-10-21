@@ -15,4 +15,5 @@ public class UpdateFileRequest {
     private String title;
     private Double price;
     private Set<String> tags;
+    private Boolean isActive;
 }

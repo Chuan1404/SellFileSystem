@@ -1,14 +1,11 @@
 import {
-  Favorite,
-  Person,
-  Receipt,
-  Search,
-  ShoppingCart,
   CloudDownload,
   Logout,
+  Person,
+  Receipt,
+  ShoppingCart
 } from "@mui/icons-material";
 import {
-  Autocomplete,
   Avatar,
   Badge,
   Box,
@@ -17,7 +14,6 @@ import {
   Divider,
   IconButton,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
@@ -41,19 +37,7 @@ export default function Header() {
   const handleSignOut = () => {
     dispatcher(signOut());
   };
-  const top100Films = [
-    { label: "The Shawshank Redemption", year: 1994 },
-    { label: "The Godfather", year: 1972 },
-    { label: "The Godfather: Part II", year: 1974 },
-    { label: "The Dark Knight", year: 2008 },
-    { label: "12 Angry Men", year: 1957 },
-    { label: "Schindler's List", year: 1993 },
-    { label: "Pulp Fiction", year: 1994 },
-    {
-      label: "The Lord of the Rings: The Return of the King",
-      year: 2003,
-    },
-  ];
+
   return (
     <Box component={"header"} id="header" bgcolor={"#fff"}>
       <Container sx={{ height: "100%" }}>
@@ -68,22 +52,6 @@ export default function Header() {
               <Typography variant="h3">DevChu</Typography>
             </Link>
           </div>
-          <Stack
-            direction={"row"}
-            justifyContent="space-between"
-            alignItems={"center"}
-            sx={{ width: "50%" }}
-          >
-            <Autocomplete
-              className="header__search"
-              options={top100Films}
-              sx={{ maxWidth: "100%", width: "100%", marginRight: 2 }}
-              renderInput={(params) => <TextField {...params} label="Movie" />}
-            />
-            <Button sx={{whiteSpace: 'nowrap'}} variant="contained" endIcon={<Search />}>
-              Tìm kiếm
-            </Button>
-          </Stack>
 
           <Box className="header__right">
             {Object.keys(user).length > 0 ? (
@@ -96,12 +64,12 @@ export default function Header() {
                     </Button>
                   }
                 >
-                  <Link to={"/user/info"}>
+                  {/* <Link to={"/user/info"}>
                     <MenuItem>
                       <Person />
                       Thông tin tài khoản
                     </MenuItem>
-                  </Link>
+                  </Link> */}
 
                   <Link to={"/user/paid"}>
                     <MenuItem>
@@ -116,7 +84,6 @@ export default function Header() {
                       Hóa đơn của tôi
                     </MenuItem>
                   </Link>
-
                   {/* <MenuItem>
                     <Favorite />
                     Danh sách yêu thích

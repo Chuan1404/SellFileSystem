@@ -19,7 +19,6 @@ import java.io.IOException;
 public class ImageHandler extends FileHandler {
     public static double avatar = 180;
     public static double display = 640;
-    public static double low = 640;
     public static double medium = 1280;
     public static double high = 1920;
     public static double minimumPixels = 3000;
@@ -27,17 +26,15 @@ public class ImageHandler extends FileHandler {
     @Override
     public ResponseEntity<?> checkFile(File file) {
         BufferedImage rootImage = fileToBufferedImage(file);
-
         if (rootImage == null)
             return ResponseEntity.badRequest().body(ErrorResponse.builder().error("Read file fail").build());
-        if (rootImage.getHeight() < minimumPixels || rootImage.getWidth() < minimumPixels)
-            return ResponseEntity.badRequest().body(ErrorResponse.builder().error(String.format("File too small. Required at least %.0f pixels", minimumPixels)).build());
+        if (rootImage.getHeight() < minimumPixels && rootImage.getWidth() < minimumPixels)
+            return ResponseEntity.badRequest().body(ErrorResponse.builder().error(String.format("Yêu cầu chất lượng tối thiểu %.0f pixels. Hiện tại là %dx%d", minimumPixels, rootImage.getWidth(), rootImage.getHeight())).build());
         return ResponseEntity.ok(Message.builder().message("Success").build());
     }
 
     @Override
     public File resizedFile(File file, double targetWidth) {
-        String format = getFileExtension(file);
         BufferedImage rootImage = fileToBufferedImage(file);
 
         double originWidth = rootImage.getWidth();
@@ -50,6 +47,13 @@ public class ImageHandler extends FileHandler {
             targetWidth = targetHeight;
             targetHeight = tam;
         }
+        return resizedFile(file, targetWidth, targetHeight);
+    }
+
+    public File resizedFile(File file, double targetWidth, double targetHeight) {
+        String format = getFileExtension(file);
+        BufferedImage rootImage = fileToBufferedImage(file);
+
         Image image = rootImage.getScaledInstance((int) targetWidth, (int) targetHeight, Image.SCALE_SMOOTH);
 
         BufferedImage resizedImage = new BufferedImage((image.getWidth(null)), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
@@ -68,7 +72,7 @@ public class ImageHandler extends FileHandler {
         BufferedImage rootImage = fileToBufferedImage(file);
         BufferedImage overlay = null;
         try {
-            overlay = ImageIO.read(new File("watermark.png"));
+            overlay = ImageIO.read(new File("watermark2.png"));
         } catch (IOException err){}
 
 
@@ -82,21 +86,9 @@ public class ImageHandler extends FileHandler {
     }
 
 
-
-
-    private String getFileExtension(File file) {
-        String name = file.getName();
-        int lastIndexOf = name.lastIndexOf(".");
-        if (lastIndexOf == -1) {
-            return ""; // empty extension
-        }
-        return name.substring(lastIndexOf + 1);
-    }
-
     public double getSize(FileQuality fileQuality) {
         double value = 0;
         switch (fileQuality) {
-            case LOW -> value = low;
             case HIGH -> value = high;
             case MEDIUM -> value = medium;
             case DISPLAY -> value = display;

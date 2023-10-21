@@ -1,42 +1,18 @@
-import { Box, IconButton, Pagination, Stack, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
-import fileService from "../services/fileService";
-import queryLocation from "../utils/queryLocation";
-import { Link } from "react-router-dom";
 import { FavoriteBorderOutlined } from "@mui/icons-material";
+import { Box, IconButton, Pagination, Stack } from "@mui/material";
+import { Link } from "react-router-dom";
+import loading from '../assets/images/loading2.svg';
 
-export default function MediaList() {
-  const [renderData, setRenderData] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [option, setOption] = useState({ page: 1 });
+export default function MediaList({data , isLoading, option, setOption, ...res}) {
 
-  const fetchData = async () => {
-    let query = `?${queryLocation.toString(option)}`;
-    let res = await fileService.getFiles(query);
-    if (!res.error) {
-      setRenderData(res);
-    }
-  };
   const handleChange = (event, value) => {
-    setOption({...option, page: value})
-  }
-  // fetch data first time
-  useEffect(() => {
-    window.scrollTo({
-      top: 0
-    })
-    setIsLoading(true)
-    fetchData();
-    setIsLoading(false)
-    
-  }, [option]);
+    setOption({ ...option, page: value });
+  };
   return (
     <Box className="mediaList">
-      {/* <Tags /> */}
-
       <Box className="mediaList__items" marginTop={2}>
         {!isLoading ? (
-          renderData?.content?.map((item, index) => (
+          data?.content?.map((item, index) => (
             <Link key={index} to={`/file/detail/${item.id}`}>
               <Box className="mediaList__items--item">
                 <img src={item.display} />
@@ -54,11 +30,15 @@ export default function MediaList() {
             </Link>
           ))
         ) : (
-          <Typography>...Loading</Typography>
+          <Stack alignItems={"center"}><img src={loading} width={50}/></Stack>
         )}
       </Box>
       <Box className="mediaList__pagination" m={5}>
-        <Pagination count={renderData?.totalPages} color="primary" onChange={handleChange}/>
+        <Pagination
+          count={data?.totalPages}
+          color="primary"
+          onChange={handleChange}
+        />
       </Box>
     </Box>
   );

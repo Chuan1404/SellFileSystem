@@ -7,7 +7,6 @@ export default function OAuth2Form({ ...props }) {
   const dispatcher = useDispatch();
   const handleSuccess = (credentialResponse) => {
     const data = jwt_decode(credentialResponse.credential);
-    console.log(data)
     dispatcher({
       type: 'OAUTH2',
       payload: data

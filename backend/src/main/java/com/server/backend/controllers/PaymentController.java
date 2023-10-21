@@ -2,7 +2,7 @@ package com.server.backend.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.server.backend.services.MomoService;
-import com.server.backend.services.PaidService;
+import com.server.backend.services.UsageRightService;
 import com.server.backend.services.ReceiptService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Map;
 
@@ -24,7 +23,7 @@ public class PaymentController {
     private ReceiptService orderService;
 
     @Autowired
-    private PaidService paidService;
+    private UsageRightService usageRightService;
 
     @PostMapping("/momo")
     public ResponseEntity<?> momoMethod(@RequestBody Map params) {
@@ -44,7 +43,7 @@ public class PaymentController {
             } catch (IOException error) {
 
             }
-            paidService.createOrExtend(content);
+            usageRightService.createOrExtend(content);
             return ResponseEntity.ok(orderService.saveOrderByMomo(params, content));
         }
         return ResponseEntity.ok(response);

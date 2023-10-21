@@ -7,9 +7,9 @@ const queryLocation = {
         }
       return str.join("&");
     },
-    toObject(defaultValues = {}) {
+    toObject(defaultValues = '?') {
       try {
-        var search = window.location.search.substring(1);
+        var search = defaultValues.substring(1);
         const obj = JSON.parse(
           '{"' +
             decodeURI(search)
@@ -18,7 +18,7 @@ const queryLocation = {
               .replace(/=/g, '":"') +
             '"}'
         );
-        return { ...defaultValues, ...obj };
+        return { ...obj };
       } catch (err) {
         return defaultValues;
       }

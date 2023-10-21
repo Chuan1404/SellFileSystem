@@ -1,18 +1,21 @@
-import { Box, Chip, Stack } from "@mui/material";
+import { Box, Chip } from "@mui/material";
+import useQuery from "../hooks/useQuery";
+import { tagService } from "../services";
 
-export default function Tags() {
+export default function Tags({option, setOption, ...props}) {
     let array = [];
-    for(let i = 0; i < 100; i++) {
+    for(let i = 0; i < 10; i++) {
         array.push("Number " + i)
     }
+    const {data, fetching} = useQuery(tagService.getTop, [])
     return (
-        <Box>
-            {array.map((item, index) => <Chip key={index} sx={{marginRight: 1, marginBottom: 1}}
+        <Box {...props}>
+            {data?.map((item, index) => <Chip key={index} sx={{marginRight: 1, marginBottom: 1}}
             label={item}
             component="a"
-            href="#basic-chip"
             variant="outlined"
             clickable
+            onClick={(e) => setOption({...option, kw: e.target.innerHTML})}
         />)}
         </Box>
     )

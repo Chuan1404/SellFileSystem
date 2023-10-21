@@ -41,11 +41,13 @@ create table `file` (
     `price` double not null default 0,
     `is_active` bit default 1 not null,
     `root` text,
-    `low` text,
     `medium` text,
 	`high` text,
     `display` text,
     `type` varchar(100),
+    `size` long,
+    `width` int,
+    `height` int,
     `user_id` varchar(100),
     
     -- delete user, file not 
@@ -53,13 +55,13 @@ create table `file` (
 );
 
 
-create table `paid` (
+create table `usage_right` (
 	`id` int primary key auto_increment,
     `file_id` int,
     `user_id` varchar(100),
-    `expireDate` datetime,
-    constraint fk_paid_user foreign key(`user_id`) references `user`(`id`) on delete cascade,
-     constraint fk_paid_file foreign key(`file_id`) references `file`(`id`) on delete cascade
+    `expire_date` datetime,
+	constraint fk_right_user foreign key(`user_id`) references `user`(`id`) on delete cascade,
+	constraint fk_right_file foreign key(`file_id`) references `file`(`id`)
 );
 
 create table `favorite` (
@@ -115,4 +117,8 @@ create table `tag` (
 --     constraint fk_file_tag foreign key(`file_id`) references `file`(`id`) on delete cascade,
 --     constraint fk_tag_file foreign key(`tag_id`) references `tag`(`id`) on delete cascade
 -- );
+
+
+   
+
 

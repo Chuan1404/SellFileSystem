@@ -8,8 +8,6 @@ import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.server.backend.enums.UserRole;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

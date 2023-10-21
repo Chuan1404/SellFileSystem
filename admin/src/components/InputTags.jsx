@@ -2,7 +2,7 @@ import { Close } from "@mui/icons-material";
 import { Chip, Stack, TextField, Typography } from "@mui/material";
 import React, { forwardRef, useRef, useState } from "react";
 
-const InputTags = forwardRef(({ defaultValue, ...props }, inputRef) => {
+const InputTags = forwardRef(({ defaultValue = [], ...props }, inputRef) => {
   const [tags, setTags] = useState(defaultValue);
   const tagRef = useRef(null);
 

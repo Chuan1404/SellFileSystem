@@ -1,5 +1,7 @@
+import { ErrorMessage } from "@hookform/error-message";
 import { People } from "@mui/icons-material";
 import {
+  Autocomplete,
   Box,
   Button,
   FormControlLabel,
@@ -12,11 +14,12 @@ import {
 } from "@mui/material";
 import React from "react";
 
-const Form = ({ formItems = [], onSubmit, ...props }) => {
+const Form = ({ formItems = [], onSubmit, errors = {}, ...props }) => {
   const isContainFile = !formItems.every((item) => item.type != "file");
   const theme = useTheme();
+
   return (
-    <form {...props}>
+    <Box component={"form"} {...props}  onSubmit={onSubmit}>
       <Grid container>
         {isContainFile && (
           <Grid item xs>
@@ -47,7 +50,9 @@ const Form = ({ formItems = [], onSubmit, ...props }) => {
                 >
                   <input type="file" hidden />
                   <People sx={{ fontSize: "7rem !important" }} />
-                  <Typography variant="h6" color={"white"}>Upload File</Typography>
+                  <Typography variant="h6" color={"white"}>
+                    Upload File
+                  </Typography>
                 </Button>
               </Box>
             </Stack>
@@ -65,32 +70,44 @@ const Form = ({ formItems = [], onSubmit, ...props }) => {
           {formItems.map((item, index) => {
             if (item.type == "text" || item.type == "password")
               return (
-                <TextField margin="normal" key={index} fullWidth {...item} />
+                <>
+                  <TextField margin="normal" key={index} fullWidth {...item} />
+                  <ErrorMessage
+                    errors={errors}
+                    name={item.name}
+                    render={({ message }) => (
+                      <Typography color="primary">{message}</Typography>
+                    )}
+                  />
+                </>
               );
-            if (item.type == "boolean")
+            if (item.type == "autocomplete")
               return (
-                <FormControlLabel
+                <Autocomplete
+                multiple
                   key={index}
-                  control={<Switch color="primary" />}
-                  {...item}
+                  defaultValue={["ROLE_EDITOR"]}
+                  options={["ROLE_EDITOR"]}
+                  renderInput={(param) => (
+                    <TextField margin="normal" {...param} {...item} />
+                  )}
                 />
               );
           })}
 
-          <Box textAlign={"center"}>
+          <Box textAlign={"center"} marginTop={2}>
             <Button
               sx={{ maxWidth: "50%" }}
               fullWidth
               variant="contained"
               type="submit"
-              onClick={onSubmit}
             >
               Xác nhận
             </Button>
           </Box>
         </Grid>
       </Grid>
-    </form>
+    </Box>
   );
 };
 

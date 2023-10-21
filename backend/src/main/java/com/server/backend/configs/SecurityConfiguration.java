@@ -60,7 +60,9 @@ public class SecurityConfiguration {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .sessionManagement(manage -> manage.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/api/user").hasRole("ADMIN")
+                        .requestMatchers("/admin/api/**").hasAnyRole("ADMIN", "EDITOR")
+                        .requestMatchers("/api/file/delete/*").hasRole("ADMIN")
                         .requestMatchers("/api/user/**").authenticated()
                         .anyRequest().permitAll())
                 .authenticationProvider(authenticationProvider())
