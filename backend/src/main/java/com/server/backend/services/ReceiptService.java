@@ -43,6 +43,11 @@ public class ReceiptService {
         return receipts;
     }
 
+    public Receipt getByMomoId(String id) {
+        Receipt receipt = receiptRepository.findByMomoId(id).orElse(null);
+        return receipt;
+    }
+
     public List<Receipt> getReceiptsContainFile(FileUploaded fileUploaded) {
         return receiptRepository.findByFileId(fileUploaded.getId());
     }
@@ -77,6 +82,7 @@ public class ReceiptService {
                     .user(user)
                     .totalPrice(Double.valueOf(String.valueOf(params.get("amount"))))
                     .method(PaymentMethod.MOMO)
+                    .momoId(params.get("orderId").toString())
                     .files(idList.stream().map(id -> fileService.getFileById(id)).collect(Collectors.toSet()))
                     .createdDate(LocalDateTime.now());
         }

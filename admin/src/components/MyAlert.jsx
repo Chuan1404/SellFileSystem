@@ -25,7 +25,7 @@ const MyAlert = () => {
     return (
         <Alert
           sx={{ position: "fixed", top: 0, right: 0, zIndex: 1000, height: 70, alignItems: "center", transition: "0.4s" }}
-          security={type}
+          severity={type}
           ref={ref}
         >
           <Stack direction={"row"} spacing={1} height={"100%"} alignItems={"center"}>

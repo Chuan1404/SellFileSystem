@@ -16,11 +16,12 @@ import { useLocation } from "react-router-dom";
 import { Authenticated, InputTags, Table } from "../../components";
 import useQuery from "../../hooks/useQuery";
 import { fileService } from "../../services";
-import { closeForm } from "../../store/slices/pageSlice";
+import { closeForm, openAlert } from "../../store/slices/pageSlice";
 import { ErrorMessage } from "@hookform/error-message";
 
 const FileList = () => {
   const { search } = useLocation();
+  const dispatch = useDispatch();
   const {
     data: fileData,
     fetching: isLoading,
@@ -65,8 +66,8 @@ const FileList = () => {
       {
         header: "Người chỉnh sửa",
         Cell: ({ row }) => {
-          if(row.original.user != null) {
-          let { avatar, id, name } = row.original.user;
+          if (row.original.user != null) {
+            let { avatar, id, name } = row.original.user;
             return (
               // <Stack spacing={1}>
               <Stack direction={"row"} alignItems={"center"} spacing={1}>
@@ -76,9 +77,8 @@ const FileList = () => {
               // <Typography variant="body1">{`ID: ${id}`}</Typography>
               // </Stack>
             );
-          }
-          else {
-            return <Typography>Đã xóa</Typography>
+          } else {
+            return <Typography>Đã xóa</Typography>;
           }
         },
       },
@@ -120,9 +120,14 @@ const FileList = () => {
     if (!res.error) {
       let filterData = fileData.content.filter((item) => item.id != id);
       setFileData({ ...fileData, content: filterData });
-    }
-    else {
-      alert(res.error)
+      dispatch(openAlert({ type: "success", message: "Xóa thành công" }));
+    } else {
+      dispatch(
+        openAlert({
+          type: "error",
+          message: "Xóa không thành công do có khách hàng đã thanh toán",
+        })
+      );
     }
   };
   return (
@@ -192,7 +197,9 @@ function FormEdit({ defaultValues = {}, handleEdit = () => {} }) {
         defaultValue={getValues("price")}
         label={"Giá (VNĐ)"}
         type="number"
-        {...register("price", {min: { value: 10000, message: "Tối thiểu 10.000 VNĐ" }, })}
+        {...register("price", {
+          min: { value: 10000, message: "Tối thiểu 10.000 VNĐ" },
+        })}
         margin="normal"
       />
       <ErrorMessage

@@ -1,6 +1,7 @@
 package com.server.backend.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.server.backend.models.Receipt;
 import com.server.backend.services.MomoService;
 import com.server.backend.services.UsageRightService;
 import com.server.backend.services.ReceiptService;
@@ -20,10 +21,12 @@ public class PaymentController {
     private MomoService momoService;
 
     @Autowired
-    private ReceiptService orderService;
+    private ReceiptService receiptService;
 
     @Autowired
     private UsageRightService usageRightService;
+
+
 
     @PostMapping("/momo")
     public ResponseEntity<?> momoMethod(@RequestBody Map params) {
@@ -34,7 +37,9 @@ public class PaymentController {
     @GetMapping("/momo/check")
     public ResponseEntity<?> momoCheck(@RequestParam Map params) {
         Map response = momoService.checkOrder(params);
-        if((int)response.get("resultCode") == 0) {
+        Receipt receipt = receiptService.getByMomoId(response.get("orderId").toString());
+        if((int)response.get("resultCode") == 0 && receipt == null) {
+            System.out.println("tinh tien");
             String decodedString = new String(Base64.getDecoder().decode(String.valueOf(params.get("extraData"))));
             Map<String, Object> content = null;
             try {
@@ -44,8 +49,10 @@ public class PaymentController {
 
             }
             usageRightService.createOrExtend(content);
-            return ResponseEntity.ok(orderService.saveOrderByMomo(params, content));
+            return ResponseEntity.ok(receiptService.saveOrderByMomo(params, content));
         }
         return ResponseEntity.ok(response);
     }
+
+
 }

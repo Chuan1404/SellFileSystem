@@ -10,10 +10,13 @@ import com.server.backend.models.Receipt;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 @Repository
 public interface ReceiptRepository extends JpaRepository<Receipt, Integer> {
+
+    Optional<Receipt> findByMomoId(String id);
 
     Page<Receipt> findByUserId(String userId, Pageable pageable);
 

@@ -12,23 +12,19 @@ Hệ thống giao dịch hình ảnh điện tử là một hệ thống giúp n
 * Spring Security
 * MySQL
 * Amazon S3
-## 3. Tình trạng dự án
-Hiện tại, hệ thống chưa được hoàn thiện và chưa sẵn sàng để deploy. Sau đây tôi sẽ trình bày các tính năng hệ thống đã có và những tính năng dự định trong tương lai.
-### 3.1. Những tính năng đã có
-- Hỗ trợ định dạng file: JPG, PNG
-- Kiểm tra và giải nén kích thước ảnh (Ví dụ: Chuyển ảnh kích thước 6000x4000 thành 1920x1280)
-- Tương tác cơ bản với Amazon S3 (Thêm, sửa xóa các file)
-#### 3.1.1. Client
-- Hỗ trợ đăng nhập và đăng kí bằng tài khoản google
-- Thanh toán bằng Momo
-- Tải ảnh gốc sau khi thanh toán thanh công
-- Minh họa: https://www.youtube.com/watch?v=tMh1i005b9Y
-#### 3.1.2. Admin
-- Quản lý tài khoản (thêm, sửa, xóa)
-- Quản lý các file (thêm, sửa, xóa vào mysql và amazon s3)
-- Minh họa: https://www.youtube.com/watch?v=csHIQtgodss
-### 3.2. Những tính năng trong tương lai
-- Hỗ trợ nhiều định dạng file hơn như MP3, MP4, ...
-- Thêm chức năng bán ảnh cho người dùng
-- Áp dụng AI trong tìm kiếm hình ảnh
-- ...
+## 3. Hướng dẫn cài đặt dự án
+### 3.1. Lưu ý trước khi cài đặt
+* Đảm bảo internet hoạt động tốt
+* Hướng dẫn ở dưới dành cho hệ điều hành windows
+* Link này chứa tất cả mọi thứ cần cho việc cài đặt nếu có nhu cầu sử dụng: https://drive.google.com/file/d/1ip5Z21p9lEZEYk00CDgi5nceQd1s41uF/view?usp=share_link
+### 3.1. Các bước cài đặt
+* Bước 1: Cài đặt MySQL Server (version 8.0.34) với port mặc định là 3306 và đặt mật khẩu cho tài khoản root là Admin@123
+** Mở command line và gõ lệnh "mysql --version" kiểm tra MySQL Server đã cài đặt thành công chưa. Nếu chưa, hãy thêm đường dẫn tới thư mục SQL Server vào mục Path của environment variables. Sau đó hãy thử lại "mysql --version"
+** Sau đó hãy gõ lệnh "mysql -h localhost -P 3306 -u root -p" và nhập password là "Admin@123"
+** Tiếp theo, hãy chạy file database.sql được lưu ở trong thư mục /backend hoặc trong folder gg drive bằng câu lệnh "source duong_dan_den_file_database.sql". Sau đó, giữ cho command line tiếp tục chạy, không được tắt.
+
+* Bước 2: Tải thư mục apache-maven version 3.9.2, giải nén và thêm đường dẫn tới thư mục maven vào mục Path của environment variables, sau đó hãy thử lệnh "mvn --version"
+
+* Bước 3: Cài đặt jdk (version 19) và thử câu lệnh "java --version". Nếu thành công, hãy mở một cmd mới ở bên trong thư mục backend và chạy câu lệnh sau: "mvn spring-boot:run" và để yên đó, không được tắt cmd
+
+* Bước 4: Cài đặt Node.js (version 18.16.0) và thử câu lệnh "node --version" trong cmd mới

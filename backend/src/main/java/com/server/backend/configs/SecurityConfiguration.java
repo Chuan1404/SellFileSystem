@@ -64,6 +64,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/admin/api/**").hasAnyRole("ADMIN", "EDITOR")
                         .requestMatchers("/api/file/delete/*").hasRole("ADMIN")
                         .requestMatchers("/api/user/**").authenticated()
+                        .requestMatchers("/api/comment/**").authenticated()
                         .anyRequest().permitAll())
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)

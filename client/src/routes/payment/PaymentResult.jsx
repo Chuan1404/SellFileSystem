@@ -22,12 +22,13 @@ const PaymentResult = () => {
   if(!fetching && !data.message) {
     dispatch(clear({userId: data.user.id}))
   }
+  console.log(data)
   return (
     <main id="payment_result_page">
       <Container sx={{ pt: 7 }}>
         {!fetching ? (
           data.message ? (
-            <Typography variant="h2">{`Đơn hàng chưa được thanh toán do: ${data.message}`}</Typography>
+            <Typography variant="h2">{data.resultCode == 0 ? 'Đơn hàng đã thanh toán':`Đơn hàng chưa được thanh toán do: ${data.message}`}</Typography>
           ) : (
             <Receipt data={data}/>
           )
@@ -36,6 +37,9 @@ const PaymentResult = () => {
         )}
 
         <Stack direction={"row"} mt={4} justifyContent={"center"}>
+        <Button variant="contained">
+            <Link to={"/user/paid"}>Tới trang tải sản phẩm</Link>
+          </Button>
           <Button variant="outlined">
             <Link to={"/"}>Trở về trang chủ</Link>
           </Button>

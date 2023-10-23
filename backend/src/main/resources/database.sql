@@ -81,26 +81,15 @@ create table `receipt` (
     constraint fk_receipt_user foreign key(`user_id`) references `user`(`id`) on delete set null
 );
 
--- create table `receipt_detail` (
--- 	`id` int primary key auto_increment,
---     `receipt_id` int,
---     `file_id` int,
---     
---     constraint fk_receipt_detail foreign key(`receipt_id`) references `receipt`(`id`) on delete cascade,
---     constraint fk_receipt_file foreign key(`file_id`) references `file`(`id`) on delete set null
--- );
-
 create table `comment` (
 	`id` int primary key auto_increment,
     `content` text not null,
     `created_date` datetime not null,
     `user_id` varchar(100),
     `file_id` int,
-    `root_comment_id` int default null,
     
     constraint fk_comment_user foreign key(`user_id`) references `user`(`id`) on delete cascade,
     constraint fk_commnet_file foreign key(`file_id`) references `file`(`id`) on delete cascade,
-    constraint fk_commnet_comment foreign key(`root_comment_id`) references `comment`(`id`) on delete cascade
 );
 
 
@@ -108,15 +97,6 @@ create table `tag` (
 	`id` int primary key auto_increment,
     `name` varchar(50) not null
 );
-
--- create table `file_tag` (
--- 	`id` int primary key auto_increment,
---     `file_id` int,
---     `tag_id` int,
---     
---     constraint fk_file_tag foreign key(`file_id`) references `file`(`id`) on delete cascade,
---     constraint fk_tag_file foreign key(`tag_id`) references `tag`(`id`) on delete cascade
--- );
 
 
    

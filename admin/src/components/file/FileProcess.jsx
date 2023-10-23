@@ -32,8 +32,9 @@ const FileProcess = ({ data, handleDelete }) => {
       handleDelete({ ...data, message: "uploaded" });
       setIsLoading(false);
       dispatch(
-        openAlert({ type: "success", message: "Đã thêm sản phẩm vào giỏ hàng" })
+        openAlert({ type: "success", message: "Upload thành công" })
       );
+     
     } 
   };
   return (

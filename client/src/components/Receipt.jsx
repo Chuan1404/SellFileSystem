@@ -3,7 +3,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const Receipt = ({ data, ...res }) => {
-  console.log(data)
   return (
     <Stack {...res}>
       <Paper sx={{ padding: 2 }} elevation={3}>
@@ -24,7 +23,6 @@ const Receipt = ({ data, ...res }) => {
               <TableCell>Tên sản phẩm</TableCell>
               <TableCell>Giá</TableCell>
               <TableCell>Thời hạn</TableCell>
-              <TableCell>Chủ sở hữu</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

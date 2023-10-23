@@ -18,7 +18,6 @@ public class TagService {
     @Autowired
     private TagRepository tagRepository;
 
-
     public List<String> getTagsByKw(String kw) {
         return tagRepository.findByKw(kw);
     }

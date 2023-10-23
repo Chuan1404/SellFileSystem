@@ -22,6 +22,7 @@ public class Receipt {
     private Integer id;
     private Double totalPrice;
     private LocalDateTime createdDate;
+    private String momoId;
 
     @Enumerated(EnumType.STRING)
     private PaymentMethod method;
