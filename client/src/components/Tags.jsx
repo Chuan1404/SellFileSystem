@@ -3,10 +3,7 @@ import useQuery from "../hooks/useQuery";
 import { tagService } from "../services";
 
 export default function Tags({option, setOption, ...props}) {
-    let array = [];
-    for(let i = 0; i < 10; i++) {
-        array.push("Number " + i)
-    }
+    
     const {data, fetching} = useQuery(tagService.getTop, [])
     return (
         <Box {...props}>
@@ -15,7 +12,7 @@ export default function Tags({option, setOption, ...props}) {
             component="a"
             variant="outlined"
             clickable
-            onClick={(e) => setOption({...option, kw: e.target.innerHTML})}
+            onClick={(e) => setOption({...option, kw: item})}
         />)}
         </Box>
     )

@@ -13,19 +13,24 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Typography,
-  switchClasses,
 } from "@mui/material";
 import React, { useRef, useState } from "react";
 import fileService from "../services/fileService";
 import FileSaver from "file-saver";
+import { useDispatch } from "react-redux";
+import { openAlert } from "../store/slices/pageSlice";
+import { Link } from "react-router-dom";
+import loading from "../assets/images/loading2.svg"
 
 const FilePaid = ({ data, ...res }) => {
   const [device, setDevice] = useState("laptop");
+  const [isDownloading, setIsDownloading] = useState(false);
   const [definition, setDefinition] = useState({
     width: data.file.width,
     height: data.file.height,
   });
   const aRef = useRef(null);
+  const dispatch = useDispatch();
 
   const handleDevice = (event, newDevice) => {
     let width, height;
@@ -60,13 +65,15 @@ const FilePaid = ({ data, ...res }) => {
     newDevice != null && setDevice(newDevice);
   };
   const handleDownload = async () => {
+    setIsDownloading(true)
     const res = await fileService.downloadFile(data.file.id, definition);
     if (res.byteLength > 0) {
       const blob = new Blob([res]);
       FileSaver.saveAs(blob, "myImage.jpg");
     } else {
-      alert("invalid");
+      dispatch(openAlert({ type: "error", message: "Invalid" }));
     }
+    setIsDownloading(false)
   };
 
   const handleInputChange = (e) => {
@@ -88,7 +95,7 @@ const FilePaid = ({ data, ...res }) => {
           <img
             style={{ borderRadius: "10px" }}
             width={"100%"}
-            src={data.file.display}
+            src={data.file.medium}
           />
         </Box>
 
@@ -144,14 +151,25 @@ const FilePaid = ({ data, ...res }) => {
 
           <Typography variant="h6">{`Có hiệu lực đến: Ngày ${data.expireDate[2]} Tháng ${data.expireDate[1]} Năm ${data.expireDate[0]}`}</Typography>
 
-          {isValid(data.expireDate) && (
-            <Button
+          {isValid(data.expireDate) ? (
+            isDownloading ? (
+              <img src={loading} width={50} style={{marginLeft: 'auto'}}/>
+            ) : (
+              <Button
               variant="contained"
               sx={{ marginTop: "auto", marginLeft: "auto" }}
               onClick={handleDownload}
             >
               Tải về
             </Button>
+            )
+          ) : (
+            <Link
+              to={`/file/detail/${data.file?.id}`}
+              sx={{ display: "block", marginTop: "auto", marginLeft: "auto" }}
+            >
+              <Button variant="contained">Gia hạn</Button>
+            </Link>
           )}
         </Stack>
       </Stack>

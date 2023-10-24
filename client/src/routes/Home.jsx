@@ -69,10 +69,11 @@ export default function Home() {
       <Banner class="banner" option={option} setOption={setOption} />
       <Box px={2}>
         <Grid container spacing={2}>
-          <Grid item md={12} textAlign={"center"} justifyContent={"center"}>
+          <Grid item sm={12} textAlign={"center"} justifyContent={"center"}>
             <Tags sx={{ mt: 5 }} option={option} setOption={setOption} />
           </Grid>
-          <Grid item md={2} xs={12}>
+          {/* <Grid item md={2} xs={12} > */}
+          <Grid item sm={12} lg={2} >
             <Box>
               <Typography variant="h6" mb={2}>
                 Giá
@@ -117,7 +118,7 @@ export default function Home() {
               </Stack>
             </Box>
           </Grid>
-          <Grid item md={10} xs={12}>
+          <Grid item lg={10}>
             <MediaList
               data={data}
               option={option}

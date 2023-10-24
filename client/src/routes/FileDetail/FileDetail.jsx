@@ -59,7 +59,7 @@ export default function FileDetail() {
         {file.id > 0 ? (
           <FormControl fullWidth>
             <Grid container spacing={2}>
-              <Grid item xs={8}>
+              <Grid item md={8}>
                 <Stack
                   sx={{ height: "80vh" }}
                   marginBottom={2}
@@ -92,7 +92,7 @@ export default function FileDetail() {
                 </Stack>
               </Grid>
 
-              <Grid item xs={4}>
+              <Grid item md={4}>
                 <Typography align="center" variant="h6">
                   {file.title}
                 </Typography>
