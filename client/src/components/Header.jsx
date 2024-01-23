@@ -1,32 +1,34 @@
 import {
   CloudDownload,
   Logout,
-  Person,
   Receipt,
-  ShoppingCart
+  ShoppingCart,
 } from "@mui/icons-material";
 import {
   Avatar,
   Badge,
   Box,
   Button,
-  Container,
   Divider,
   IconButton,
   Stack,
   Typography,
 } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { signOut } from "../store/slices/authSlice";
 import { openAuth } from "../store/slices/pageSlice";
 import CustomizedMenus from "./CustomizedMenus";
+import Search from "./Search";
 
-export default function Header() {
+export default function Header({ style = "bright" }) {
   const dispatcher = useDispatch();
   const user = useSelector((store) => store.auth.user);
   const cart = useSelector((store) => store.cart.values);
+  const ref = useRef(null);
+  const location = useLocation();
 
   // ---------- Sign in click ----------
   const handleSignIn = () => {
@@ -38,88 +40,109 @@ export default function Header() {
     dispatcher(signOut());
   };
 
-  return (
-    <Box component={"header"} id="header" bgcolor={"#fff"}>
-      <Container sx={{ height: "100%" }}>
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems={"center"}
-          sx={{ height: "100%" }}
-        >
-          <div className="header_logo">
-            <Link to="/">
-              <Typography variant="h3">DevChu</Typography>
-            </Link>
-          </div>
+  const handleScroll = () => {
+    if (location.pathname == "/") {
+      let scrolled = window.scrollY;
+      let height = ref.current.offsetHeight;
+      scrolled >= height
+        ? ref.current.classList.add("scroll")
+        : ref.current.classList.remove("scroll");
+    }
+  };
 
-          <Box className="header__right">
-            {Object.keys(user).length > 0 ? (
-              <Stack direction={"row"} spacing={1}>
-                <CustomizedMenus
-                  ButtonMenu={
-                    <Button>
-                      <Avatar src={user.avatar} sx={{ marginRight: 1 }} />
-                      <Typography>{user.name}</Typography>
-                    </Button>
-                  }
-                >
-                  {/* <Link to={"/user/info"}>
+  useEffect(() => {
+    if (location.pathname == "/")
+      window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  });
+
+  return (
+    <Box component={"header"} className={`header ${window.location.pathname != "/" && "scroll"}`} ref={ref}>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems={"center"}
+        sx={{ height: "100%" }}
+      >
+        <Box className="header_logo">
+          <Link to="/">
+            <h1 variant="h3">DevChu</h1>
+          </Link>
+        </Box>
+
+        <Box
+          className="header__middle"
+          sx={{ display: { xs: "none", md: "flex" } }}
+        >
+          <Search bgColor="#fff" />
+        </Box>
+
+        <Box className="header__right">
+          {Object.keys(user).length > 0 ? (
+            <Stack direction={"row"} spacing={1}>
+              <CustomizedMenus
+                ButtonMenu={
+                  <Button>
+                    <Avatar src={user.avatar} sx={{ marginRight: 1 }} />
+                    <Typography>{user.name}</Typography>
+                  </Button>
+                }
+              >
+                {/* <Link to={"/user/info"}>
                     <MenuItem>
                       <Person />
                       Thông tin tài khoản
                     </MenuItem>
                   </Link> */}
 
-                  <Link to={"/user/paid"}>
-                    <MenuItem>
-                      <CloudDownload />
-                      Sản phẩm của tôi
-                    </MenuItem>
-                  </Link>
+                <Link to={"/user/paid"}>
+                  <MenuItem>
+                    <CloudDownload />
+                    Sản phẩm của tôi
+                  </MenuItem>
+                </Link>
 
-                  <Link to={"/user/receipt"}>
-                    <MenuItem>
-                      <Receipt />
-                      Hóa đơn của tôi
-                    </MenuItem>
-                  </Link>
-                  {/* <MenuItem>
+                <Link to={"/user/receipt"}>
+                  <MenuItem>
+                    <Receipt />
+                    Hóa đơn của tôi
+                  </MenuItem>
+                </Link>
+                {/* <MenuItem>
                     <Favorite />
                     Danh sách yêu thích
                   </MenuItem> */}
-                  <Divider />
-                  <MenuItem onClick={handleSignOut}>
-                    <Logout />
-                    Đăng xuất
-                  </MenuItem>
-                </CustomizedMenus>
-                <Link
-                  to="/cart"
-                  style={{ display: "flex", alignItems: "center" }}
-                >
-                  <IconButton color="primary" sx={{ height: "fit-content" }}>
-                    <Badge
-                      badgeContent={cart[user.id]?.length}
-                      color="secondary"
-                    >
-                      <ShoppingCart />
-                    </Badge>
-                  </IconButton>
-                </Link>
-              </Stack>
-            ) : (
-              <Button
-                variant="contained"
-                onClick={handleSignIn}
-                sx={{ alignSelf: "center" }}
+                <Divider />
+                <MenuItem onClick={handleSignOut}>
+                  <Logout />
+                  Đăng xuất
+                </MenuItem>
+              </CustomizedMenus>
+              <Link
+                to="/cart"
+                style={{ display: "flex", alignItems: "center" }}
               >
-                Đăng nhập
-              </Button>
-            )}
-          </Box>
-        </Stack>
-      </Container>
+                <IconButton color="primary" sx={{ height: "fit-content" }}>
+                  <Badge badgeContent={cart[user.id]?.length} color="secondary">
+                    <ShoppingCart sx={{ transition: "0.4s" }} />
+                  </Badge>
+                </IconButton>
+              </Link>
+            </Stack>
+          ) : (
+            <Button
+              variant="text"
+              onClick={handleSignIn}
+              sx={{ alignSelf: "center" }}
+            >
+              Đăng nhập
+            </Button>
+          )}
+        </Box>
+      </Stack>
     </Box>
   );
 }

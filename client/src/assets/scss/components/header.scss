@@ -1,9 +1,53 @@
-#header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: $headerHeight;
-    z-index: 1000;
-    box-shadow: 0 0 60px rgba(0,0,0,.12);
+.header {
+  position: fixed;
+  width: 100vw;
+  height: $headerHeight;
+  z-index: 1000;
+  color: white;
+  background-color: transparent;
+  transition: $t;
+  padding: 0 1.5rem;
+
+  &__logo {
+    height: 100%;
+  }
+
+  &__middle {
+    height: 100%;
+    width: 50%;
+    opacity: 0;
+    visibility: hidden;
+    align-items: center;
+  }
+
+  &__right {
+    button {
+      color: white;
+      &:hover {
+        background-color: rgba($color: #fff, $alpha: 0.04);
+      }
+    }
+  }
+
+  // header.scroll
+
+  &.scroll {
+    background-color: $darkColor;
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.12);
+    color: $mainColor;
+  }
+
+  &.scroll &__right {
+    button {
+      color: $mainColor;
+      &:hover {
+        background-color: rgba($color: $mainColor, $alpha: 0.04);
+      }
+    }
+  }
+
+  .scroll &__middle {
+    opacity: 1;
+    visibility: visible;
+  }
 }

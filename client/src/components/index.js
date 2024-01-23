@@ -16,6 +16,8 @@ import Receipt from "./Receipt";
 import FilePaid from "./FilePaid";
 import Authenticated from "./AuthBox/Authenticated";
 import Title from './Title'
+import Search from "./Search";
+import SearchBox from "./SearchBox";
 
 export {
     Header,
@@ -36,4 +38,6 @@ export {
     FilePaid,
     Authenticated,
     Title,
+    Search,
+    SearchBox
 }

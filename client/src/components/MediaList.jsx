@@ -1,15 +1,21 @@
 import { FavoriteBorderOutlined } from "@mui/icons-material";
 import { Box, IconButton, Pagination, Stack } from "@mui/material";
 import { Link } from "react-router-dom";
-import loading from '../assets/images/loading2.svg';
+import loading from "../assets/images/loading2.svg";
 
-export default function MediaList({data , isLoading, option, setOption, ...res}) {
 
+export default function MediaList({
+  data,
+  isLoading,
+  option,
+  setOption,
+  ...props
+}) {
   const handleChange = (event, value) => {
     setOption({ ...option, page: value });
   };
   return (
-    <Box className="mediaList">
+    <Box className="mediaList" {...props}>
       <Box className="mediaList__items" marginTop={2}>
         {!isLoading ? (
           data?.content?.map((item, index) => (
@@ -30,16 +36,19 @@ export default function MediaList({data , isLoading, option, setOption, ...res})
             </Link>
           ))
         ) : (
-          <Stack alignItems={"center"}><img src={loading} width={50}/></Stack>
+          <Stack alignItems={"center"}>
+            <img src={loading} width={50} />
+          </Stack>
         )}
       </Box>
-      <Box className="mediaList__pagination" m={5}>
+      {data?.totalPages > 0 && <Box className="mediaList__pagination" m={5}>
         <Pagination
-          count={data?.totalPages}
+          count={data.totalPages}
           color="primary"
           onChange={handleChange}
         />
-      </Box>
+      </Box>}
+      
     </Box>
   );
 }
