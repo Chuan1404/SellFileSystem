@@ -89,7 +89,7 @@ create table `comment` (
     `file_id` int,
     
     constraint fk_comment_user foreign key(`user_id`) references `user`(`id`) on delete cascade,
-    constraint fk_commnet_file foreign key(`file_id`) references `file`(`id`) on delete cascade,
+    constraint fk_commnet_file foreign key(`file_id`) references `file`(`id`) on delete cascade
 );
 
 

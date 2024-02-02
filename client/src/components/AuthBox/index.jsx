@@ -14,7 +14,7 @@ export default function AuthBox() {
         setTabIndex(value)
     }
     return (
-        <Box className="authbox" width={"30vw"}>
+        <Box className="authbox" width={"100%"} maxWidth={350} borderRadius={2} overflow={'hidden'}>
             <Box className="authbox__header" bgcolor={theme.palette.secondary.main} padding={1}>
                 <Typography align="center" variant="h6" color={"#fff"}>Welcome to our website, please log in to continue</Typography>
             </Box>

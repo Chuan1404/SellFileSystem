@@ -59,9 +59,9 @@ export default function FileDetail() {
         {file.id > 0 ? (
           <FormControl fullWidth>
             <Grid container spacing={2}>
-              <Grid item md={8}>
+              <Grid item xs={12} md={8}>
                 <Stack
-                  sx={{ height: "80vh" }}
+                  sx={{ height: "auto" }}
                   marginBottom={2}
                   justifyContent={"center"}
                   alignContent={"center"}
@@ -77,22 +77,9 @@ export default function FileDetail() {
                     <ImageZoom src={file.high} alt="" zoom="200" />
                   )}
                 </Stack>
-                <Stack>
-                  {isLogin ? (
-                    <CommentBox fileId={id} user={user} />
-                  ) : (
-                    <Button
-                      onClick={handleViewComment}
-                      size="small"
-                      sx={{ width: "fit-content", alignSelf: "center" }}
-                    >
-                      <Typography>Đăng nhập để xem bình luận</Typography>
-                    </Button>
-                  )}
-                </Stack>
               </Grid>
 
-              <Grid item md={4}>
+              <Grid item xs={12} md={4}>
                 <Typography align="center" variant="h6">
                   {file.title}
                 </Typography>
@@ -201,6 +188,22 @@ export default function FileDetail() {
                     Thêm vào giỏ hàng
                   </Button>
                 </Box>
+              </Grid>
+
+              <Grid item xs={12}>
+                <Stack>
+                  {isLogin ? (
+                    <CommentBox fileId={id} user={user} />
+                  ) : (
+                    <Button
+                      onClick={handleViewComment}
+                      size="small"
+                      sx={{ width: "fit-content", alignSelf: "center" }}
+                    >
+                      <Typography>Đăng nhập để xem bình luận</Typography>
+                    </Button>
+                  )}
+                </Stack>
               </Grid>
             </Grid>
           </FormControl>

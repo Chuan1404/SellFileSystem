@@ -92,6 +92,9 @@ const NavBar = forwardRef((props, ref) => {
         ref={ref}
         bgcolor={theme.palette.secondary.main}
       >
+        <Box className='navBar__close'>
+          close
+        </Box>
         <List className="navBar__list" disablePadding>
           {routeData.map((item, index) => {
             let roles = item.allowRoles?.filter((role) =>
